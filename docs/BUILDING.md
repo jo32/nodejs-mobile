@@ -122,6 +122,28 @@ are EOL and Apple Silicon runs the arm64 simulator natively.)
 
 Output: **`out_ios/NodeMobile.xcframework`** (device + simulator arm64 slices).
 
+### tvOS (Apple TV)
+
+The same script builds Apple TV slices. tvOS runs the iOS configuration
+(jitless V8, polywasm, `TARGET_OS_IPHONE` code paths); `configure --tvos`
+switches gyp to the `appletvos` / `appletvsimulator` SDKs and
+`TVOS_DEPLOYMENT_TARGET` (17.0).
+
+```sh
+./tools/ios_framework_prepare.sh tvos-arm64             # device
+./tools/ios_framework_prepare.sh tvos-arm64-simulator   # simulator
+./tools/ios_framework_prepare.sh combine_all            # every out_ios_*/ slice -> out_ios/NodeMobile.xcframework
+```
+
+Build each slice in its own source tree (e.g. `git worktree add`) to run two
+at once: slices share `out/Release`. `NM_NO_CLEAN=1` skips `make clean` for a
+quick retry of the same slice.
+
+What differs on tvOS: the SDK marks `execve(2)` unavailable, so
+`process.execve()` throws `ENOTSUP`; `child_process` fails at run time as on
+a real iPhone. Both platforms build `--without-ffi` (node:ffi needs
+executable closures) and without V8 postmortem metadata.
+
 ---
 
 ## The lite variant

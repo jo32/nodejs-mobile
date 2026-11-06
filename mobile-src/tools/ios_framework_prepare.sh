@@ -126,7 +126,8 @@ else
 fi
 
 build_for_arm64_device() {
-  make clean
+  # NM_NO_CLEAN=1 keeps the previous objects (faster retries of one slice).
+  [ -n "${NM_NO_CLEAN:-}" ] || make clean
   GYP_DEFINES="target_arch=arm64 host_os=mac target_os=ios $V8_NO_TURBOFAN_GYP_DEFINES"
   export GYP_DEFINES
   ./configure \
@@ -137,6 +138,7 @@ build_for_arm64_device() {
     --cross-compiling \
     --enable-static \
     --openssl-no-asm \
+    --without-ffi \
     --v8-options=--jitless \
     $V8_LITE_MODE \
     $V8_DISABLE_MAGLEV \
@@ -158,7 +160,8 @@ build_for_arm64_device() {
 }
 
 build_for_arm64_simulator() {
-  make clean
+  # NM_NO_CLEAN=1 keeps the previous objects (faster retries of one slice).
+  [ -n "${NM_NO_CLEAN:-}" ] || make clean
   GYP_DEFINES="target_arch=arm64 host_os=mac target_os=ios $V8_NO_TURBOFAN_GYP_DEFINES"
   export GYP_DEFINES
   ./configure \
@@ -169,6 +172,7 @@ build_for_arm64_simulator() {
     --cross-compiling \
     --enable-static \
     --openssl-no-asm \
+    --without-ffi \
     --v8-options=--jitless \
     $V8_LITE_MODE \
     $V8_DISABLE_MAGLEV \
@@ -273,8 +277,89 @@ set_framework_target_dir() {
   fi
 }
 
+# nodejs-mobile: Apple TV slices. tvOS runs the same jitless configuration as
+# iOS (TARGET_OS_IPHONE is set there too); --tvos switches gyp to the
+# appletvos / appletvsimulator SDKs and TVOS_DEPLOYMENT_TARGET.
+build_libs_tvos() {
+  local slice=$1; shift
+  # NM_NO_CLEAN=1 keeps the previous objects (faster retries of one slice).
+  [ -n "${NM_NO_CLEAN:-}" ] || make clean
+  GYP_DEFINES="target_arch=arm64 host_os=mac target_os=ios $V8_NO_TURBOFAN_GYP_DEFINES"
+  export GYP_DEFINES
+  ./configure \
+    --dest-os=ios \
+    --tvos \
+    --dest-cpu=arm64 \
+    --with-intl=$INTL \
+    $LITE_FLAGS \
+    --cross-compiling \
+    --enable-static \
+    --openssl-no-asm \
+    --without-ffi \
+    --v8-options=--jitless \
+    $V8_LITE_MODE \
+    $V8_DISABLE_MAGLEV \
+    --without-node-code-cache \
+    --without-node-snapshot \
+    "$@"
+  make -j$(getconf _NPROCESSORS_ONLN)
+  make -C out v8_compiler BUILDTYPE=Release -j$(getconf _NPROCESSORS_ONLN)
+  mkdir -p $TARGET_LIBRARY_PATH/$slice
+  for output_file in "${outputs_arm64[@]}"; do
+    cp $LIBRARY_PATH/$output_file $TARGET_LIBRARY_PATH/$slice/
+  done
+}
+
+build_framework_tvos() {
+  local slice=$1 sdk=$2
+  for output_file in "${outputs_arm64[@]}"; do
+    rm -f $TARGET_LIBRARY_PATH/$output_file
+    mv $TARGET_LIBRARY_PATH/$slice/$output_file $TARGET_LIBRARY_PATH/$output_file
+  done
+  cp $XCODE_PROJECT_PATH $XCODE_PROJECT_PATH.bak
+  if [ "$FLAVOR" = "lite" ]; then
+    for output_file in "${outputs_full_only[@]}"; do
+      grep -vF "$output_file" $XCODE_PROJECT_PATH > temp && mv temp $XCODE_PROJECT_PATH
+    done
+  fi
+  xcodebuild build \
+    -project $NODELIB_PROJECT_PATH/NodeMobile.xcodeproj \
+    -target "NodeMobile" \
+    -configuration Release \
+    -arch arm64 \
+    -sdk "$sdk" \
+    SDKROOT="$sdk" \
+    SUPPORTED_PLATFORMS="appletvos appletvsimulator" \
+    TARGETED_DEVICE_FAMILY=3 \
+    TVOS_DEPLOYMENT_TARGET=17.0 \
+    SYMROOT=$FRAMEWORK_TARGET_DIR/$sdk-arm64
+  mv $XCODE_PROJECT_PATH.bak $XCODE_PROJECT_PATH
+}
+
+# One xcframework from every slice built so far (out_ios_<slice>/).
+combine_all_frameworks() {
+  local args=()
+  for f in out_ios_*/*-arm64/Release-*/NodeMobile.framework; do
+    [ -d "$f" ] && args+=(-framework "$PWD/$f")
+  done
+  rm -rf out_ios/NodeMobile.xcframework
+  mkdir -p out_ios
+  xcodebuild -create-xcframework "${args[@]}" -output out_ios/NodeMobile.xcframework
+  echo "Framework built: out_ios/NodeMobile.xcframework"
+}
+
 # Interpret the command line arguments
-if [[ $1 == "arm64" ]]; then
+if [[ $1 == "tvos-arm64" ]]; then
+  set_framework_target_dir $1
+  build_libs_tvos tvos-device
+  build_framework_tvos tvos-device appletvos
+elif [[ $1 == "tvos-arm64-simulator" ]]; then
+  set_framework_target_dir $1
+  build_libs_tvos tvos-simulator --ios-simulator
+  build_framework_tvos tvos-simulator appletvsimulator
+elif [[ $1 == "combine_all" ]]; then
+  combine_all_frameworks
+elif [[ $1 == "arm64" ]]; then
   set_framework_target_dir $1
   build_for_arm64_device
   build_framework_for_arm64_device
@@ -286,7 +371,7 @@ elif [[ $1 == "combine_frameworks" ]]; then
   set_framework_target_dir
   combine_frameworks
 elif [[ $1 == "--help" ]]; then
-  echo "Usage: ios_framework_prepare.sh arm64|arm64-simulator|combine_frameworks"
+  echo "Usage: ios_framework_prepare.sh arm64|arm64-simulator|tvos-arm64|tvos-arm64-simulator|combine_frameworks|combine_all"
   exit 1
 else
   build_for_arm64_device

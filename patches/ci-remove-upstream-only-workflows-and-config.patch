@@ -22,53 +22,61 @@ is read only from the default branch and is left untouched.
 ---
  .github/ISSUE_TEMPLATE/config.yml             |  14 -
  .github/SUPPORT.md                            |  27 --
- .github/label-pr-config.yml                   | 224 ------------
+ .github/label-pr-config.yml                   | 236 -----------
  .github/workflows/author-ready-conflicts.yml  |  48 ---
- .github/workflows/auto-start-ci.yml           |  78 -----
- .github/workflows/build-tarball.yml           |  96 ------
+ .github/workflows/auto-start-ci.yml           |  93 -----
+ .github/workflows/benchmark.yml               | 271 -------------
+ .github/workflows/build-shared.yml            |  93 -----
+ .github/workflows/build-tarball.yml           | 132 -------
  .github/workflows/close-stalled.yml           |  36 --
  .github/workflows/codeql.yml                  |  44 ---
- .github/workflows/comment-labeled.yml         |  57 ----
+ .github/workflows/comment-labeled.yml         |  57 ---
  .github/workflows/commit-lint.yml             |  56 ---
- .github/workflows/commit-queue.yml            | 201 -----------
- .github/workflows/contributor-guidance.yml    | 141 --------
- .../workflows/coverage-linux-without-intl.yml |  84 -----
- .github/workflows/coverage-linux.yml          |  84 -----
- .github/workflows/coverage-windows.yml        |  98 ------
- .github/workflows/create-release-proposal.yml |  81 -----
- .github/workflows/daily-wpt-fyi.yml           | 177 ----------
+ .github/workflows/commit-queue.yml            | 203 ----------
+ .github/workflows/contributor-guidance.yml    | 141 -------
+ .../workflows/coverage-linux-without-intl.yml |  90 -----
+ .github/workflows/coverage-linux.yml          |  90 -----
+ .github/workflows/coverage-windows.yml        | 106 -----
+ .github/workflows/create-release-proposal.yml |  81 ----
+ .github/workflows/daily-wpt-fyi.yml           | 164 --------
  .github/workflows/daily.yml                   |  30 --
- .github/workflows/doc.yml                     |  41 ---
+ .github/workflows/doc.yml                     |  41 --
  .../workflows/find-inactive-collaborators.yml |  50 ---
- .github/workflows/find-inactive-tsc.yml       |  62 ----
+ .github/workflows/find-inactive-tsc.yml       |  62 ---
  .github/workflows/label-flaky-test-issue.yml  |  53 ---
  .github/workflows/label-pr.yml                |  18 -
- .github/workflows/license-builder.yml         |  38 ---
- .github/workflows/lint-release-proposal.yml   | 119 -------
- .github/workflows/linters.yml                 | 250 --------------
+ .github/workflows/license-builder.yml         |  38 --
+ .github/workflows/lint-release-proposal.yml   | 119 ------
+ .github/workflows/linters.yml                 | 278 -------------
  .github/workflows/major-release.yml           |  49 ---
- .github/workflows/notify-on-push.yml          |  64 ----
+ .github/workflows/nix-changes-comment.yml     |  98 -----
+ .github/workflows/nix-changes.yml             | 128 ------
+ .github/workflows/notify-on-push.yml          |  64 ---
  .github/workflows/notify-on-review-wanted.yml |  45 ---
  .github/workflows/post-release.yml            |  33 --
  .../remark-lint-problem-matcher.json          |  22 --
- .github/workflows/scorecard.yml               |  81 -----
+ .github/workflows/scorecard.yml               |  81 ----
  .github/workflows/stale.yml                   |  51 ---
- .github/workflows/stress-test.yml             | 114 -------
- .github/workflows/test-internet.yml           |  64 ----
- .github/workflows/test-linux-quic.yml         |  69 ----
- .github/workflows/test-linux.yml              |  85 -----
- .github/workflows/test-macos.yml              | 102 ------
+ .github/workflows/stress-test.yml             | 114 ------
+ .github/workflows/test-internet.yml           |  70 ----
+ .github/workflows/test-linux-perfetto.yml     |  73 ----
+ .github/workflows/test-linux-quic.yml         |  81 ----
+ .github/workflows/test-linux.yml              | 100 -----
+ .github/workflows/test-macos.yml              | 142 -------
+ .github/workflows/test-shared.yml             | 273 -------------
  .github/workflows/timezone-update.yml         |  74 ----
- .github/workflows/tools.yml                   | 321 ------------------
- .github/workflows/update-openssl.yml          |  61 ----
- .github/workflows/update-v8.yml               |  57 ----
- .github/workflows/update-wpt.yml              |  95 ------
- 43 files changed, 3594 deletions(-)
+ .github/workflows/tools.yml                   | 365 ------------------
+ .github/workflows/update-openssl.yml          |  69 ----
+ .github/workflows/update-v8.yml               |  57 ---
+ .github/workflows/update-wpt.yml              |  95 -----
+ 49 files changed, 4755 deletions(-)
  delete mode 100644 .github/ISSUE_TEMPLATE/config.yml
  delete mode 100644 .github/SUPPORT.md
  delete mode 100644 .github/label-pr-config.yml
  delete mode 100644 .github/workflows/author-ready-conflicts.yml
  delete mode 100644 .github/workflows/auto-start-ci.yml
+ delete mode 100644 .github/workflows/benchmark.yml
+ delete mode 100644 .github/workflows/build-shared.yml
  delete mode 100644 .github/workflows/build-tarball.yml
  delete mode 100644 .github/workflows/close-stalled.yml
  delete mode 100644 .github/workflows/codeql.yml
@@ -91,6 +99,8 @@ is read only from the default branch and is left untouched.
  delete mode 100644 .github/workflows/lint-release-proposal.yml
  delete mode 100644 .github/workflows/linters.yml
  delete mode 100644 .github/workflows/major-release.yml
+ delete mode 100644 .github/workflows/nix-changes-comment.yml
+ delete mode 100644 .github/workflows/nix-changes.yml
  delete mode 100644 .github/workflows/notify-on-push.yml
  delete mode 100644 .github/workflows/notify-on-review-wanted.yml
  delete mode 100644 .github/workflows/post-release.yml
@@ -99,9 +109,11 @@ is read only from the default branch and is left untouched.
  delete mode 100644 .github/workflows/stale.yml
  delete mode 100644 .github/workflows/stress-test.yml
  delete mode 100644 .github/workflows/test-internet.yml
+ delete mode 100644 .github/workflows/test-linux-perfetto.yml
  delete mode 100644 .github/workflows/test-linux-quic.yml
  delete mode 100644 .github/workflows/test-linux.yml
  delete mode 100644 .github/workflows/test-macos.yml
+ delete mode 100644 .github/workflows/test-shared.yml
  delete mode 100644 .github/workflows/timezone-update.yml
  delete mode 100644 .github/workflows/tools.yml
  delete mode 100644 .github/workflows/update-openssl.yml
@@ -163,10 +175,10 @@ index 4613512bf2..0000000000
 -your expectations.
 diff --git a/.github/label-pr-config.yml b/.github/label-pr-config.yml
 deleted file mode 100644
-index 8b36066473..0000000000
+index f30b6b8a5e..0000000000
 --- a/.github/label-pr-config.yml
 +++ /dev/null
-@@ -1,224 +0,0 @@
+@@ -1,236 +0,0 @@
 -## Order of entries in this map *does* matter for the resolved labels
 -## earlier entries override later entries
 -subSystemLabels:
@@ -184,6 +196,7 @@ index 8b36066473..0000000000
 -  /^src\/uv\./: c++, libuv
 -  /^src\/(?:connect(?:ion)?|pipe|tcp)_/: c++, net
 -  /^src\/node_os/: c++, os
+-  /^src\/permission\//: c++, permission
 -  /^src\/(?:node_main|signal_)/: c++, process
 -  /^src\/timer[_s]/: c++, timers
 -  /^src\/node_root_certs/: c++, tls
@@ -271,6 +284,7 @@ index 8b36066473..0000000000
 -  /^lib\/test.js$/: test_runner
 -  /^lib\/v8.js$/: v8 module
 -  /^lib\/internal\/url\.js$/: whatwg-url
+-  /^lib\/internal\/process\/permission\.js$/: permission
 -  /^lib\/internal\/modules\/esm/: esm
 -  /^lib\/internal\/modules/: module
 -  /^lib\/internal\/source_map/: source maps
@@ -285,6 +299,13 @@ index 8b36066473..0000000000
 -
 -exlusiveLabels:
 -  # More specific tests
+-  /^test\/(?:parallel|sequential)\/test-(?:[^/]+-)?permission(?:-|\.)/: test, permission
+-  /^test\/ffi\/test-ffi-permissions?(?:-|\.)/: test, permission
+-  /^test\/addons\/no-addons\/permission\.js$/: test, addons, permission
+-  /^test\/es-module\/test-[^/]*-permission(?:-|\.)/: test, esm, permission
+-  /^test\/module-hooks\/test-[^/]*-permission(?:-|\.)/: test, module, loaders, permission
+-  /^test\/fixtures\/permission\//: test, permission
+-  /^test\/fixtures\/rc\/permission-namespace\.json$/: test, permission
 -  /^test\/addons\//: test, addons
 -  /^test\/debugger/: test, debugger
 -  /^test\/doctool\//: test, doc, tools
@@ -319,6 +340,7 @@ index 8b36066473..0000000000
 -  # test_runner documentation
 -  /^doc\/api\/test.md$/: doc, test_runner
 -  # Automatically tag JS subsystem-specific API doc changes
+-  /^doc\/api\/permissions\.md$/: doc, permission
 -  /^doc\/api\/(\w+)\.md$/: doc, $1
 -  # Add deprecations label to PRs that affect doc/api/deprecations.md
 -  /^doc\/api\/deprecations.md$/: doc, deprecations
@@ -331,6 +353,7 @@ index 8b36066473..0000000000
 -  /^doc\//: doc
 -
 -  # More specific benchmarks
+-  /^benchmark\/fs\/readfile-permission-enabled\.js$/: benchmark, fs, permission
 -  /^benchmark\/buffers\//: benchmark, buffer
 -  /^benchmark\/es\//: benchmark, v8 engine
 -  /^benchmark\/_http/: benchmark, http
@@ -367,6 +390,7 @@ index 8b36066473..0000000000
 -  - os
 -  - path
 -  - perf_hooks
+-  - permission
 -  - process
 -  - punycode
 -  - querystring
@@ -447,13 +471,16 @@ index f447c6b80a..0000000000
 -            done
 diff --git a/.github/workflows/auto-start-ci.yml b/.github/workflows/auto-start-ci.yml
 deleted file mode 100644
-index 8c01b0592c..0000000000
+index 85f3e92f2f..0000000000
 --- a/.github/workflows/auto-start-ci.yml
 +++ /dev/null
-@@ -1,78 +0,0 @@
+@@ -1,93 +0,0 @@
 -# This action uses the following secrets:
 -#   JENKINS_USER: GitHub user whose Jenkins token is defined below
--#   JENKINS_TOKEN: Jenkins token, to be used to start CI
+-#   JENKINS_TOKEN: Jenkins token, to be used to start or resume CI
+-# Optional repository variables:
+-#   AUTO_START_CI_BATCH_SIZE: maximum PRs to process per run (default: 5)
+-#   AUTO_START_CI_MAX_WORKLOAD: pause at this many running or queued PR jobs (default: 15)
 -name: Auto Start CI
 -
 -on:
@@ -483,16 +510,25 @@ index 8c01b0592c..0000000000
 -    steps:
 -      - name: Get Pull Requests
 -        id: get_prs_for_ci
--        run: >
--          echo "numbers=$(gh pr list \
+-        # Explicit bash enables pipefail so jq cannot hide a failed gh query.
+-        shell: bash
+-        run: |
+-          if ! [[ "$BATCH_SIZE" =~ ^[1-9][0-9]*$ ]]; then
+-            echo '::error::AUTO_START_CI_BATCH_SIZE must be a strictly positive integer'
+-            exit 1
+-          fi
+-          # Filter before selecting the batch; UNKNOWN mergeability is retried later.
+-          numbers=$(gh pr list \
 -                  --repo "$GITHUB_REPOSITORY" \
--                  --label 'request-ci' \
--                  --json 'number' \
--                  --search 'review:approved' \
--                  -t '{{ range . }}{{ .number }} {{ end }}' \
--                  --limit 5)" >> "$GITHUB_OUTPUT"
+-                  --json 'number,mergeable' \
+-                  --search 'review:approved label:request-ci,resume-ci' \
+-                  --limit 100 \
+-                  | jq --argjson limit "$BATCH_SIZE" \
+-                    '[.[] | select(.mergeable == "MERGEABLE") | .number] | .[:$limit] | map(tostring) | join(" ")' -r)
+-          echo "numbers=$numbers" >> "$GITHUB_OUTPUT"
 -        env:
 -          GH_TOKEN: ${{ github.token }}
+-          BATCH_SIZE: ${{ vars.AUTO_START_CI_BATCH_SIZE || '5' }}
 -  start-ci:
 -    permissions:
 -      checks: read
@@ -523,30 +559,426 @@ index 8c01b0592c..0000000000
 -          GH_TOKEN: ${{ github.token }}
 -          JENKINS_TOKEN: ${{ secrets.JENKINS_TOKEN }}
 -
--      - name: Start the CI
+-      - name: Start or resume the CI
 -        run: |
+-          read -r -a numbers <<< "$PULL_REQUESTS"
 -          curl -fsSL "https://github.com/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/tools/actions/start-ci.sh" \
--          | sh -s -- ${{ needs.get-prs-for-ci.outputs.numbers }}
+-          | sh -s -- "${numbers[@]}"
 -        env:
 -          GH_TOKEN: ${{ github.token }}
+-          PULL_REQUESTS: ${{ needs.get-prs-for-ci.outputs.numbers }}
+-          MAX_WORKLOAD: ${{ vars.AUTO_START_CI_MAX_WORKLOAD || '15' }}
+diff --git a/.github/workflows/benchmark.yml b/.github/workflows/benchmark.yml
+deleted file mode 100644
+index 9f4ed58447..0000000000
+--- a/.github/workflows/benchmark.yml
++++ /dev/null
+@@ -1,271 +0,0 @@
+-name: Benchmark
+-
+-on:
+-  workflow_dispatch:
+-    inputs:
+-      repo:
+-        type: string
+-        description: GitHub repository to fetch from (default to the current repo)
+-      pr_id:
+-        type: number
+-        required: true
+-        description: The PR to test
+-      commit:
+-        required: true
+-        type: string
+-        description: The expect HEAD of the PR
+-      category:
+-        required: true
+-        type: string
+-        description: The category (or categories) of tests to run, for example buffers, cluster etc. Maps to a folders in node/benchmark
+-      filter:
+-        type: string
+-        description: A substring to restrict the benchmarks to run in a category. e.g. `net-c2c`
+-      runs:
+-        type: number
+-        default: 30
+-        description: How many times to repeat each benchmark
+-      post-comment:
+-        type: boolean
+-        description: Post a comment linking to the run, with the aggregated result once known.
+-      token:
+-        type: string
+-        description: A GitHub token to post comments cross repository (not recommended)
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  post-comment:
+-    if: inputs.post-comment
+-    outputs:
+-      body: ${{ steps.comment.outputs.COMMENT_BODY }}
+-      url: ${{ steps.comment.outputs.COMMENT_URL }}
+-    runs-on: ubuntu-slim
+-    permissions:
+-      pull-requests: write
+-    steps:
+-      - name: Mark token input as sensitive
+-        if: inputs.token != ''
+-        run: printf '::add-mask::%s\n' "$COMMENT_TOKEN"
+-        env:
+-          COMMENT_TOKEN: ${{ inputs.token }}
+-      - name: Add link to the current run
+-        id: comment
+-        run: |
+-          FILTER_IF_SET=
+-          [ -z "$FILTER" ] || FILTER_IF_SET=" / $FILTER"
+-          COMMENT_BODY="Benchmark GHA (${CATEGORIES}${FILTER_IF_SET}): ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+-          echo "COMMENT_BODY=$COMMENT_BODY" >> "$GITHUB_OUTPUT"
+-          echo "COMMENT_URL=$(gh pr comment -R "${REPO:-$GITHUB_REPOSITORY}" "$PR_ID" --body "$COMMENT_BODY")" >> "$GITHUB_OUTPUT"
+-        env:
+-          CATEGORIES: ${{ inputs.category }}
+-          FILTER: ${{ inputs.filter }}
+-          GH_TOKEN: ${{ inputs.token || github.token }}
+-          REPO: ${{ inputs.repo }}
+-          PR_ID: ${{ inputs.pr_id }}
+-  build:
+-    strategy:
+-      fail-fast: true
+-      matrix:
+-        include:
+-          - runner: ubuntu-24.04
+-            system: x86_64-linux
+-            perfetto: true
+-          - runner: ubuntu-24.04-arm
+-            system: aarch64-linux
+-          - runner: macos-15-intel
+-            system: x86_64-darwin
+-          - runner: macos-latest
+-            system: aarch64-darwin
+-    name: '${{ matrix.system }}: with shared libraries${{ matrix.perfetto && '' and perfetto'' || '''' }}'
+-    runs-on: ${{ matrix.runner }}
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-        with:
+-          repository: ${{ inputs.repo || github.repository }}
+-          ref: refs/pull/${{ inputs.pr_id }}/merge
+-          persist-credentials: false
+-          fetch-depth: 2
+-
+-      - name: Validate PR head and roll back to base commit
+-        run: |
+-          [ "$(git rev-parse HEAD^2)" = "$EXPECTED_SHA" ]
+-          git reset HEAD^ --hard
+-        env:
+-          EXPECTED_SHA: ${{ inputs.commit }}
+-
+-      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
+-        with:
+-          extra_nix_config: sandbox = true
+-
+-      - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866  # v17
+-        with:
+-          # We do not pass any `authToken` to avoid polluting the cache with potentially untrusted code.
+-          name: nodejs
+-
+-      - name: Configure sccache
+-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+-        with:
+-          script: |
+-            core.exportVariable('SCCACHE_GHA_ENABLED', 'on');
+-            core.exportVariable('SCCACHE_GHA_RW_MODE', 'READ_ONLY');
+-            core.exportVariable('ACTIONS_CACHE_SERVICE_V2', 'on');
+-            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL || '');
+-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+-
+-      - name: Build Node.js on the base commit
+-        run: |
+-          nix-shell \
+-            -I nixpkgs=./tools/nix/pkgs.nix \
+-            --pure --keep TAR_DIR --keep FLAKY_TESTS \
+-            --keep SCCACHE_GHA_ENABLED --keep SCCACHE_GHA_RW_MODE \
+-            --keep ACTIONS_CACHE_SERVICE_V2 --keep ACTIONS_RESULTS_URL --keep ACTIONS_RUNTIME_TOKEN \
+-            --arg withPerfetto ${{ matrix.perfetto || false }} \
+-            --arg ccache '(import <nixpkgs> {}).sccache' \
+-            --run '
+-              make build-ci -j4 V=1 && sccache --stop-server
+-            ' tools/nix/ci-shell.nix
+-          mv out/Release/node base_node
+-
+-      - name: Checkout the merge commit
+-        run: git reset FETCH_HEAD --hard
+-
+-      - name: Re-build Node.js on the merge commit
+-        # Keep the compiler command unchanged for incremental builds, but never cache PR build outputs.
+-        run: |
+-          nix-shell \
+-            -I nixpkgs=./tools/nix/pkgs.nix \
+-            --pure --keep SCCACHE_LOCAL_RW_MODE \
+-            --arg withPerfetto ${{ matrix.perfetto || false }} \
+-            --arg ccache '(import <nixpkgs> {}).sccache' \
+-            --run '
+-                make build-ci -j4 V=1 ${{ contains(format(' {0} ', inputs.category), ' napi ') && '&& make bench-addons-build' || '' }}
+-            ' tools/nix/ci-shell.nix
+-        env:
+-          SCCACHE_LOCAL_RW_MODE: READ_ONLY
+-
+-      - name: Run benchmark
+-        run: |
+-          nix-shell \
+-            -I nixpkgs=./tools/nix/pkgs.nix \
+-            --pure --keep CATEGORIES --keep FILTER --keep RUNS --keep LC_ALL --keep LANG \
+-            --arg loadJSBuiltinsDynamically false \
+-            --arg ccache 'null' \
+-            --arg icu 'null' \
+-            --arg sharedLibDeps '{}' \
+-            --arg devTools '[]' \
+-            --run '
+-                set -o pipefail
+-                read -r -a categories <<< "$CATEGORIES"
+-                ./base_node benchmark/compare.js \
+-                  --filter "$FILTER" \
+-                  --runs "$RUNS" \
+-                  --old ./base_node --new ./node \
+-                  -- "${categories[@]}" \
+-                | tee /dev/stderr \
+-                > ${{ matrix.system }}.csv
+-                echo "> [!WARNING] "
+-                echo "> Do not take GHA benchmark results as face value, always confirm them"
+-                echo "> using a dedicated machine, e.g. Jenkins CI."
+-                echo
+-                echo "Benchmark results:"
+-                echo
+-                echo '"'"'```'"'"'
+-                Rscript benchmark/compare.R < ${{ matrix.system }}.csv
+-                echo '"'"'```'"'"'
+-                echo
+-                echo "> [!WARNING] "
+-                echo "> Do not take GHA benchmark results as face value, always confirm them"
+-                echo "> using a dedicated machine, e.g. Jenkins CI."
+-            ' | tee /dev/stderr >> "$GITHUB_STEP_SUMMARY"
+-        env:
+-          CATEGORIES: ${{ inputs.category }}
+-          FILTER: ${{ inputs.filter }}
+-          RUNS: ${{ inputs.runs }}
+-
+-      - name: Upload raw benchmark results
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+-        with:
+-          name: csv-${{ matrix.system }}
+-          path: ${{ matrix.system }}.csv
+-
+-  aggregate-results:
+-    needs: [build, post-comment]
+-    if: ${{ always() && needs.build.result == 'success' && needs.post-comment.result == (inputs.post-comment && 'success' || 'skipped') }}
+-    name: Aggregate benchmark results
+-    runs-on: ubuntu-slim
+-    permissions:
+-      contents: read
+-      pull-requests: write
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-        with:
+-          persist-credentials: false
+-          sparse-checkout: |
+-            benchmark/*.R
+-            tools/nix/*.nix
+-            *.nix
+-          sparse-checkout-cone-mode: false
+-
+-      - name: Download benchmark raw results
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+-        with:
+-          pattern: csv-*
+-          merge-multiple: true
+-          path: raw-results
+-
+-      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
+-        with:
+-          extra_nix_config: sandbox = true
+-
+-      - name: Benchmark results
+-        run: |
+-          nix-shell \
+-            -I nixpkgs=./tools/nix/pkgs.nix \
+-            --pure \
+-            -E '(import <nixpkgs> {}).mkShellNoCC { buildInputs = import ./tools/nix/benchmarkTools.nix { withHttpBenchmarkDeps = false; }; }' \
+-            --run '
+-                export LC_ALL=C.UTF-8
+-                echo "> [!WARNING] "
+-                echo "> Do not take GHA benchmark results as face value, always confirm them"
+-                echo "> using a dedicated machine, e.g. Jenkins CI."
+-                echo
+-                echo "Benchmark results:"
+-                echo
+-                echo '"'"'```'"'"'
+-                awk "FNR==1 && NR!=1{next;}{print}" raw-results/*.csv | Rscript benchmark/compare.R
+-                echo '"'"'```'"'"'
+-                echo
+-                echo "> [!WARNING] "
+-                echo "> Do not take GHA benchmark results as face value, always confirm them"
+-                echo "> using a dedicated machine, e.g. Jenkins CI."
+-            ' | tee /dev/stderr ${{ inputs.post-comment && 'body.txt' || '' }} >> "$GITHUB_STEP_SUMMARY"
+-      - name: Mark token input as sensitive
+-        if: inputs.token != ''
+-        run: printf '::add-mask::%s\n' "$COMMENT_TOKEN"
+-        env:
+-          COMMENT_TOKEN: ${{ inputs.token }}
+-      - name: Edit comment
+-        if: inputs.post-comment
+-        run: |
+-          {
+-            echo "$COMMENT_BODY"
+-            echo
+-            echo '<details><summary>Results</summary>'
+-            echo
+-            cat body.txt
+-            echo
+-            echo '</details>'
+-          } | jq -Rrcs '{ body: . }' | gh api \
+-            --method PATCH \
+-            -H "Accept: application/vnd.github+json" \
+-            -H "X-GitHub-Api-Version: 2026-03-10" \
+-            "/repos/${REPO:-$GITHUB_REPOSITORY}/issues/comments/${COMMENT_URL##*-}" \
+-            --input -
+-        env:
+-          GH_TOKEN: ${{ inputs.token || github.token }}
+-          REPO: ${{ inputs.repo }}
+-          COMMENT_BODY: ${{ needs.post-comment.outputs.body }}
+-          COMMENT_URL: ${{ needs.post-comment.outputs.url }}
+-          PR_ID: ${{ inputs.pr_id }}
+diff --git a/.github/workflows/build-shared.yml b/.github/workflows/build-shared.yml
+deleted file mode 100644
+index 73f7ec6afb..0000000000
+--- a/.github/workflows/build-shared.yml
++++ /dev/null
+@@ -1,93 +0,0 @@
+-name: Build Node.js (shared libraries)
+-
+-on:
+-  workflow_call:
+-    inputs:
+-      runner:
+-        description: The runner to use for the job.
+-        required: true
+-        type: string
+-      extra-nix-flags:
+-        description: Additional CLI arguments appended to the nix-shell invocation.
+-        required: false
+-        type: string
+-        default: ''
+-      with-sccache:
+-        description: Whether to enable sccache
+-        required: false
+-        type: boolean
+-        default: false
+-      v8-nar:
+-        description: An optional name for the NAR archive for V8 that needs to be downloaded
+-        required: false
+-        type: string
+-        default: ''
+-      pkcs11-store-test:
+-        description: Whether to enable the PKCS#11-backed crypto STORE test
+-        required: false
+-        type: boolean
+-        default: false
+-    secrets:
+-      CACHIX_AUTH_TOKEN:
+-        description: Cachix auth token for nodejs.cachix.org.
+-        required: false
+-
+-permissions: {}
+-
+-env:
+-  FLAKY_TESTS: keep_retrying
+-
+-jobs:
+-  build:
+-    runs-on: ${{ inputs.runner }}
+-    steps:
+-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+-        with:
+-          path: tarballs
+-          pattern: '*.tar.gz'
+-          merge-multiple: true
+-
+-      - name: Extract tarball
+-        shell: bash
+-        run: |
+-          tar xzf tarballs/*.tar.gz -C "$RUNNER_TEMP"
+-          echo "TAR_DIR=$RUNNER_TEMP/$(basename tarballs/*.tar.gz .tar.gz)" >> "$GITHUB_ENV"
+-
+-      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
+-        with:
+-          extra_nix_config: sandbox = true
+-
+-      - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866  # v17
+-        with:
+-          name: nodejs
+-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+-
+-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+-        if: inputs.v8-nar
+-        with:
+-          name: ${{ inputs.v8-nar }}
+-
+-      - name: Configure sccache
+-        if: inputs.with-sccache
+-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
+-        with:
+-          script: |
+-            core.exportVariable('SCCACHE_GHA_ENABLED', 'on');
+-            core.exportVariable('ACTIONS_CACHE_SERVICE_V2', 'on');
+-            core.exportVariable('ACTIONS_RESULTS_URL', process.env.ACTIONS_RESULTS_URL || '');
+-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+-            core.exportVariable('NIX_SCCACHE', '(import <nixpkgs> {}).sccache');
+-
+-      - name: Build Node.js and run tests
+-        shell: bash
+-        run: |
+-          nix-shell \
+-            -I "nixpkgs=$TAR_DIR/tools/nix/pkgs.nix" \
+-            --pure --keep TAR_DIR --keep FLAKY_TESTS \
+-            --keep SCCACHE_GHA_ENABLED --keep ACTIONS_CACHE_SERVICE_V2 --keep ACTIONS_RESULTS_URL --keep ACTIONS_RUNTIME_TOKEN \
+-            --arg ccache "${NIX_SCCACHE:-null}" \
+-            --arg pkcs11 ${{ inputs.pkcs11-store-test }} \
+-            ${{ inputs.extra-nix-flags }} \
+-            --run '
+-                make -C "$TAR_DIR" run-ci -j4 V=1 TEST_CI_ARGS="-p actions --measure-flakiness 9 --skip-tests=$CI_SKIP_TESTS"
+-            ' "$TAR_DIR/tools/nix/ci-shell.nix"
 diff --git a/.github/workflows/build-tarball.yml b/.github/workflows/build-tarball.yml
 deleted file mode 100644
-index 8b306b59fe..0000000000
+index b3ac6aad47..0000000000
 --- a/.github/workflows/build-tarball.yml
 +++ /dev/null
-@@ -1,96 +0,0 @@
+@@ -1,132 +0,0 @@
 -name: Build from tarball
 -
 -on:
 -  pull_request:
 -    types: [opened, synchronize, reopened, ready_for_review]
 -    paths-ignore:
--      - .mailmap
 -      - '**.md'
--      - AUTHORS
+-      - '**.nix'
+-      - eslint.config.mjs
+-      - '**/eslint.config_partial.mjs'
+-      - android-configure
+-      - android-configure.py
+-      - android-patches/**
+-      - benchmarks/**
+-      - codecov.yml
 -      - doc/**
+-      - pyproject.yml
+-      - tsconfig.json
 -      - test/internet/**
--      - .github/**
+-      - tools/actions/**
+-      - tools/dep_updaters/**
+-      - tools/doc/**
+-      - tools/eslint-rules/**
+-      - tools/eslint/**
+-      - tools/lint-md/**
+-      - tools/nix/**
+-      - typings/**
+-      - vcbuild.bat
+-      - .**
 -      - '!.github/workflows/build-tarball.yml'
 -  push:
 -    branches:
@@ -554,12 +986,29 @@ index 8b306b59fe..0000000000
 -      - v[0-9]+.x-staging
 -      - v[0-9]+.x
 -    paths-ignore:
--      - .mailmap
 -      - '**.md'
--      - AUTHORS
+-      - '**.nix'
+-      - eslint.config.mjs
+-      - '**/eslint.config_partial.mjs'
+-      - android-configure
+-      - android-configure.py
+-      - android-patches/**
+-      - benchmarks/**
+-      - codecov.yml
 -      - doc/**
+-      - pyproject.yml
+-      - tsconfig.json
 -      - test/internet/**
--      - .github/**
+-      - tools/actions/**
+-      - tools/dep_updaters/**
+-      - tools/doc/**
+-      - tools/eslint-rules/**
+-      - tools/eslint/**
+-      - tools/lint-md/**
+-      - tools/nix/**
+-      - typings/**
+-      - vcbuild.bat
+-      - .**
 -      - '!.github/workflows/build-tarball.yml'
 -
 -concurrency:
@@ -567,8 +1016,9 @@ index 8b306b59fe..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
+-  CLANG_VERSION: '19'
 -
 -permissions:
 -  contents: read
@@ -585,12 +1035,13 @@ index 8b306b59fe..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Make tarball
 -        run: |
 -          export DISTTYPE=nightly
 -          export DATESTRING=$(date "+%Y-%m-%d")
 -          export COMMIT=$(git rev-parse --short=10 "$GITHUB_SHA")
--          ./configure && make tar -j4 SKIP_XZ=1
+-          ./configure && make tar -j4 SKIP_XZ=1 GZIP_COMPRESSION=6
 -      - name: Upload tarball artifact
 -        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
 -        with:
@@ -600,20 +1051,20 @@ index 8b306b59fe..0000000000
 -    needs: build-tarball
 -    runs-on: ubuntu-24.04-arm
 -    env:
--      CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang
--      CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++
+-      CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-      CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
 -      SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
 -      SCCACHE_IDLE_TIMEOUT: '0'
 -    steps:
--      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
 -        with:
--          persist-credentials: false
--          sparse-checkout: .github/actions/install-clang
--          sparse-checkout-cone-mode: false
+-          clang-version: ${{ env.CLANG_VERSION }}
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -675,7 +1126,7 @@ index 3c7ab04339..0000000000
 -          days-before-stale: -1
 diff --git a/.github/workflows/codeql.yml b/.github/workflows/codeql.yml
 deleted file mode 100644
-index 1b3179ef4a..0000000000
+index d8eca1f2b7..0000000000
 --- a/.github/workflows/codeql.yml
 +++ /dev/null
 @@ -1,44 +0,0 @@
@@ -711,16 +1162,16 @@ index 1b3179ef4a..0000000000
 -
 -      # Initializes the CodeQL tools for scanning.
 -      - name: Initialize CodeQL
--        uses: github/codeql-action/init@b96794f015dfd88f77b49b1c93e0fa7110f94c63  # v4.38.0
+-        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2  # v4.38.2
 -        with:
 -          languages: ${{ matrix.language }}
 -          config-file: ./.github/codeql-config.yml
 -
 -      - name: Autobuild
--        uses: github/codeql-action/autobuild@b96794f015dfd88f77b49b1c93e0fa7110f94c63  # v4.38.0
+-        uses: github/codeql-action/autobuild@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2  # v4.38.2
 -
 -      - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63  # v4.38.0
+-        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2  # v4.38.2
 -        with:
 -          category: /language:${{matrix.language}}
 diff --git a/.github/workflows/comment-labeled.yml b/.github/workflows/comment-labeled.yml
@@ -850,10 +1301,10 @@ index 6b173d8bc9..0000000000
 -            }
 diff --git a/.github/workflows/commit-queue.yml b/.github/workflows/commit-queue.yml
 deleted file mode 100644
-index 8f29a390c6..0000000000
+index 83f921838b..0000000000
 --- a/.github/workflows/commit-queue.yml
 +++ /dev/null
-@@ -1,201 +0,0 @@
+@@ -1,203 +0,0 @@
 -# This action requires the following secrets to be set on the repository:
 -#   GH_USER_TOKEN: GitHub user token, to be used by ncu and to push changes
 -#   JENKINS_USER: GitHub user whose Jenkins token is defined below
@@ -1052,9 +1503,11 @@ index 8f29a390c6..0000000000
 -          git config --local user.email "github-bot@iojs.org"
 -          git config --local user.name "Node.js GitHub Bot"
 -          ncu-config set token "$GH_TOKEN"
--          ./tools/actions/commit-queue.sh ${{ steps.get_mergeable_prs.outputs.numbers }}
+-          read -r -a numbers <<< "$PULL_REQUESTS"
+-          ./tools/actions/commit-queue.sh "${numbers[@]}"
 -        env:
 -          GH_TOKEN: ${{ secrets.GH_USER_TOKEN }}
+-          PULL_REQUESTS: ${{ steps.get_mergeable_prs.outputs.numbers }}
 diff --git a/.github/workflows/contributor-guidance.yml b/.github/workflows/contributor-guidance.yml
 deleted file mode 100644
 index 4035ea9320..0000000000
@@ -1204,10 +1657,10 @@ index 4035ea9320..0000000000
 -            gh pr comment "$NUMBER" --repo "$GITHUB_REPOSITORY" --body-file -
 diff --git a/.github/workflows/coverage-linux-without-intl.yml b/.github/workflows/coverage-linux-without-intl.yml
 deleted file mode 100644
-index 61309d3d6a..0000000000
+index 4ab6975305..0000000000
 --- a/.github/workflows/coverage-linux-without-intl.yml
 +++ /dev/null
-@@ -1,84 +0,0 @@
+@@ -1,90 +0,0 @@
 -name: Coverage Linux (without intl)
 -
 -on:
@@ -1244,10 +1697,11 @@ index 61309d3d6a..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
--  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang
--  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++
+-  CLANG_VERSION: '19'
+-  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
 -  SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
 -  SCCACHE_IDLE_TIMEOUT: '0'
 -
@@ -1262,10 +1716,15 @@ index 61309d3d6a..0000000000
 -      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 -        with:
 -          persist-credentials: false
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
+-        with:
+-          clang-version: ${{ env.CLANG_VERSION }}
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -1289,15 +1748,15 @@ index 61309d3d6a..0000000000
 -      - name: Clean tmp
 -        run: rm -rf coverage/tmp && rm -rf out
 -      - name: Upload
--        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f  # v7.0.0
+-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5  # v7.1.1
 -        with:
 -          directory: ./coverage
 diff --git a/.github/workflows/coverage-linux.yml b/.github/workflows/coverage-linux.yml
 deleted file mode 100644
-index 4d350ebd2e..0000000000
+index a642c0fada..0000000000
 --- a/.github/workflows/coverage-linux.yml
 +++ /dev/null
-@@ -1,84 +0,0 @@
+@@ -1,90 +0,0 @@
 -name: Coverage Linux
 -
 -on:
@@ -1334,10 +1793,11 @@ index 4d350ebd2e..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
--  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang
--  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++
+-  CLANG_VERSION: '19'
+-  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
 -  SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
 -  SCCACHE_IDLE_TIMEOUT: '0'
 -
@@ -1352,10 +1812,15 @@ index 4d350ebd2e..0000000000
 -      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 -        with:
 -          persist-credentials: false
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
+-        with:
+-          clang-version: ${{ env.CLANG_VERSION }}
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -1379,15 +1844,15 @@ index 4d350ebd2e..0000000000
 -      - name: Clean tmp
 -        run: rm -rf coverage/tmp && rm -rf out
 -      - name: Upload
--        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f  # v7.0.0
+-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5  # v7.1.1
 -        with:
 -          directory: ./coverage
 diff --git a/.github/workflows/coverage-windows.yml b/.github/workflows/coverage-windows.yml
 deleted file mode 100644
-index d735ea551c..0000000000
+index c2ce5c3401..0000000000
 --- a/.github/workflows/coverage-windows.yml
 +++ /dev/null
-@@ -1,98 +0,0 @@
+@@ -1,106 +0,0 @@
 -name: Coverage Windows
 -
 -on:
@@ -1413,6 +1878,7 @@ index d735ea551c..0000000000
 -      - tools/eslint-rules/**
 -      - tools/eslint/**
 -      - tools/lint-md/**
+-      - tools/nix/**
 -      - typings/**
 -      - .**
 -      - '!.github/workflows/coverage-windows.yml'
@@ -1439,6 +1905,7 @@ index d735ea551c..0000000000
 -      - tools/eslint-rules/**
 -      - tools/eslint/**
 -      - tools/lint-md/**
+-      - tools/nix/**
 -      - typings/**
 -      - .**
 -      - '!.github/workflows/coverage-windows.yml'
@@ -1448,8 +1915,9 @@ index d735ea551c..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
+-  RUSTC_VERSION: '1.86'
 -
 -permissions:
 -  contents: read
@@ -1466,10 +1934,15 @@ index d735ea551c..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Install deps
 -        run: choco install nasm
+-      - name: Install Rust ${{ env.RUSTC_VERSION }}
+-        run: |
+-          rustup override set "$RUSTC_VERSION"
+-          rustup --version
 -      - name: Build
--        run: ./vcbuild.bat clang-cl
+-        run: ./vcbuild.bat clang-cl v8temporal
 -      # TODO(bcoe): investigate tests that fail with coverage enabled
 -      # on Windows.
 -      - name: Test
@@ -1483,7 +1956,7 @@ index d735ea551c..0000000000
 -      - name: Clean tmp
 -        run: npx rimraf ./coverage/tmp
 -      - name: Upload
--        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f  # v7.0.0
+-        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5  # v7.1.1
 -        with:
 -          directory: ./coverage
 diff --git a/.github/workflows/create-release-proposal.yml b/.github/workflows/create-release-proposal.yml
@@ -1575,10 +2048,10 @@ index 735b15ffd1..0000000000
 -          BOT_TOKEN: ${{ secrets.GH_USER_TOKEN }}
 diff --git a/.github/workflows/daily-wpt-fyi.yml b/.github/workflows/daily-wpt-fyi.yml
 deleted file mode 100644
-index 1078899499..0000000000
+index b16b640a08..0000000000
 --- a/.github/workflows/daily-wpt-fyi.yml
 +++ /dev/null
-@@ -1,177 +0,0 @@
+@@ -1,164 +0,0 @@
 -# This workflow runs every night and tests various releases of Node.js
 -# (latest nightly, current, and two latest LTS release lines) against the
 -# `epochs/daily` branch of WPT.
@@ -1594,6 +2067,7 @@ index 1078899499..0000000000
 -    - cron: 30 0 * * *
 -
 -env:
+-  # WPT's pywebsocket3 still uses CGIHTTPRequestHandler, removed in Python 3.15.
 -  PYTHON_VERSION: '3.14'
 -
 -permissions:
@@ -1623,6 +2097,7 @@ index 1078899499..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -
 -      # install a version and checkout
 -      - name: Get latest nightly
@@ -1685,33 +2160,15 @@ index 1078899499..0000000000
 -          else
 -            echo "UNDICI_WPT=legacy" >> $GITHUB_ENV
 -          fi
--      # Checkout composite actions from the default branch since the
--      # version-specific checkout above overwrites .github/actions/
--      - name: Checkout undici WPT actions
--        if: ${{ env.WPT_REPORT != '' }}
--        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
--        with:
--          sparse-checkout: |
--            .github/actions/undici-wpt-current
--            .github/actions/undici-wpt-legacy
--          sparse-checkout-cone-mode: false
--          persist-credentials: false
--          path: _wpt_actions
--          clean: false
--      - name: Place undici WPT actions
--        if: ${{ env.WPT_REPORT != '' }}
--        run: |
--          mkdir -p .github/actions
--          cp -r _wpt_actions/.github/actions/undici-wpt-* .github/actions/
 -      - name: Run undici WPT (current)
 -        if: ${{ env.UNDICI_WPT == 'current' }}
--        uses: ./.github/actions/undici-wpt-current
+-        uses: $/.github/actions/undici-wpt-current
 -        with:
 -          undici-version: ${{ env.UNDICI_VERSION }}
 -          wpt-report: ${{ env.WPT_REPORT }}
 -      - name: Run undici WPT (legacy)
 -        if: ${{ env.UNDICI_WPT == 'legacy' }}
--        uses: ./.github/actions/undici-wpt-legacy
+-        uses: $/.github/actions/undici-wpt-legacy
 -        with:
 -          undici-version: ${{ env.UNDICI_VERSION }}
 -          wpt-report: ${{ env.WPT_REPORT }}
@@ -1720,7 +2177,9 @@ index 1078899499..0000000000
 -      - name: Clone report for upload
 -        if: ${{ env.WPT_REPORT != '' }}
 -        working-directory: out/wpt
--        run: cp wptreport.json wptreport-${{ steps.setup-node.outputs.node-version }}.json
+-        run: cp wptreport.json "wptreport-$NODE_VERSION.json"
+-        env:
+-          NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
 -      - name: Upload GitHub Actions artifact
 -        if: ${{ env.WPT_REPORT != '' }}
 -        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
@@ -1731,12 +2190,13 @@ index 1078899499..0000000000
 -      - name: Upload WPT Report to wpt.fyi API
 -        if: ${{ env.WPT_REPORT != '' }}
 -        env:
+-          NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
 -          WPT_FYI_USERNAME: ${{ vars.WPT_FYI_USERNAME }}
 -          WPT_FYI_PASSWORD: ${{ secrets.WPT_FYI_PASSWORD }}
 -        working-directory: out/wpt
 -        run: |
 -          gzip wptreport.json
--          echo "## Node.js ${{ steps.setup-node.outputs.node-version }}" >> $GITHUB_STEP_SUMMARY
+-          echo "## Node.js $NODE_VERSION" >> $GITHUB_STEP_SUMMARY
 -          echo "" >> $GITHUB_STEP_SUMMARY
 -          echo "WPT Revision: [\`${WPT_REVISION:0:7}\`](https://github.com/web-platform-tests/wpt/commits/$WPT_REVISION)" >> $GITHUB_STEP_SUMMARY
 -          for WPT_FYI_ENDPOINT in "https://wpt.fyi/api/results/upload" "https://staging.wpt.fyi/api/results/upload"
@@ -2024,7 +2484,7 @@ index 35d780ae66..0000000000
 -        run: gh issue edit "$NUMBER" --repo "$GITHUB_REPOSITORY" --add-label "$LABELS"
 diff --git a/.github/workflows/label-pr.yml b/.github/workflows/label-pr.yml
 deleted file mode 100644
-index 03aa1fa9a8..0000000000
+index 3c50701224..0000000000
 --- a/.github/workflows/label-pr.yml
 +++ /dev/null
 @@ -1,18 +0,0 @@
@@ -2042,7 +2502,7 @@ index 03aa1fa9a8..0000000000
 -    runs-on: ubuntu-slim
 -
 -    steps:
--      - uses: nodejs/node-pr-labeler@d4cf1b8b9f23189c37917000e5e17e796c770a6b  # v1
+-      - uses: nodejs/node-pr-labeler@dfe5eb3b099a487644e32567a482744620876ab3  # v1
 -        with:
 -          repo-token: ${{ secrets.GH_USER_TOKEN }}
 -          configuration-path: .github/label-pr-config.yml
@@ -2092,7 +2552,7 @@ index 3bdf3fc31d..0000000000
 -          labels: meta
 diff --git a/.github/workflows/lint-release-proposal.yml b/.github/workflows/lint-release-proposal.yml
 deleted file mode 100644
-index 027aee336a..0000000000
+index 9652eea91b..0000000000
 --- a/.github/workflows/lint-release-proposal.yml
 +++ /dev/null
 @@ -1,119 +0,0 @@
@@ -2108,7 +2568,7 @@ index 027aee336a..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  NODE_VERSION: lts/*
 -
 -permissions:
@@ -2217,10 +2677,10 @@ index 027aee336a..0000000000
 -          GH_TOKEN: ${{ github.token }}
 diff --git a/.github/workflows/linters.yml b/.github/workflows/linters.yml
 deleted file mode 100644
-index 38980ecf6d..0000000000
+index a4997b3d4c..0000000000
 --- a/.github/workflows/linters.yml
 +++ /dev/null
-@@ -1,250 +0,0 @@
+@@ -1,278 +0,0 @@
 -name: Linters
 -
 -on:
@@ -2237,7 +2697,7 @@ index 38980ecf6d..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  NODE_VERSION: lts/*
 -
 -permissions:
@@ -2264,10 +2724,17 @@ index 38980ecf6d..0000000000
 -      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 -        with:
 -          persist-credentials: false
+-          # Skip large vendored trees that lint-cpp does not use.
+-          sparse-checkout: |
+-            /*
+-            !/deps/openssl/
+-            !/deps/v8/
+-          sparse-checkout-cone-mode: false
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Lint C/C++ files
 -        run: make lint-cpp
 -  format-cpp:
@@ -2276,7 +2743,8 @@ index 38980ecf6d..0000000000
 -    steps:
 -      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 -        with:
--          fetch-depth: 0
+-          # The first parent of the PR merge commit is the base branch commit.
+-          fetch-depth: 2
 -          persist-credentials: false
 -      - name: Use Node.js ${{ env.NODE_VERSION }}
 -        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
@@ -2286,6 +2754,7 @@ index 38980ecf6d..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Format C/C++ files
 -        run: |
 -          make format-cpp-build
@@ -2293,7 +2762,7 @@ index 38980ecf6d..0000000000
 -          # because it is irrelevant. We already check if the formatter produced
 -          # a diff in the next line.
 -          # Refs: https://github.com/nodejs/node/pull/42764
--          CLANG_FORMAT_START="$(git merge-base HEAD refs/remotes/origin/$GITHUB_BASE_REF)" \
+-          CLANG_FORMAT_START=HEAD^ \
 -            make format-cpp || true
 -          git --no-pager diff --exit-code && EXIT_CODE="$?" || EXIT_CODE="$?"
 -          if [ "$EXIT_CODE" != "0" ]
@@ -2314,13 +2783,29 @@ index 38980ecf6d..0000000000
 -        with:
 -          persist-credentials: false
 -      - name: Use Node.js ${{ env.NODE_VERSION }}
+-        id: setup-node
 -        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  # v7.0.0
 -        with:
 -          node-version: ${{ env.NODE_VERSION }}
+-          cache: npm
+-          cache-dependency-path: |
+-            tools/doc/package-lock.json
+-            tools/eslint/package-lock.json
+-            tools/lint-md/package-lock.json
+-      - name: Cache ESLint results
+-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+-        env:
+-          # ESLint only invalidates its cache on config changes, so the key also
+-          # covers the custom rules and the files they read.
+-          cache-prefix: eslint-${{ runner.os }}-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('eslint.config.mjs', '*/eslint.config_partial.mjs', 'tools/eslint/*', 'tools/eslint-rules/**', 'doc/api/errors.md', 'doc/api/deprecations.md') }}
+-        with:
+-          path: .eslintcache
+-          key: ${{ env.cache-prefix }}-${{ github.sha }}
+-          restore-keys: ${{ env.cache-prefix }}-
 -      - name: Lint JavaScript files
 -        run: |
 -          set +e
--          NODE=$(command -v node) make lint-js
+-          NODE=$(command -v node) make lint-js ESLINT_CACHE_FLAGS='--cache --cache-strategy content'
 -          EXIT_CODE="$?"
 -          if [ "$EXIT_CODE" != "0" ]; then
 -            echo
@@ -2350,9 +2835,10 @@ index 38980ecf6d..0000000000
 -      - name: Lint markdown files
 -        run: |
 -          echo "::add-matcher::.github/workflows/remark-lint-problem-matcher.json"
--          NODE=$(command -v node) make lint-md
+-          NODE=$(command -v node) make lint-md ESLINT_CACHE_FLAGS='--cache --cache-strategy content'
 -        env:
 -          NODE_RELEASED_VERSIONS: ${{ steps.get-released-versions.outputs.NODE_RELEASED_VERSIONS }}
+-
 -  lint-py:
 -    if: github.event.pull_request.draft == false
 -    runs-on: ubuntu-slim
@@ -2374,6 +2860,7 @@ index 38980ecf6d..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Lint Python
 -        run: |
 -          make lint-py-build
@@ -2395,6 +2882,7 @@ index 38980ecf6d..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Lint YAML
 -        run: |
 -          make lint-yaml-build || true
@@ -2473,7 +2961,7 @@ index 38980ecf6d..0000000000
 -          TEAMS: ${{ tojson(steps.team_members.outputs) }}
 diff --git a/.github/workflows/major-release.yml b/.github/workflows/major-release.yml
 deleted file mode 100644
-index b65917f89e..0000000000
+index 1b15a00c8d..0000000000
 --- a/.github/workflows/major-release.yml
 +++ /dev/null
 @@ -1,49 +0,0 @@
@@ -2481,7 +2969,7 @@ index b65917f89e..0000000000
 -
 -on:
 -  schedule:
--    - cron: 0 0 15 2,8 *  # runs at midnight UTC every 15 February and 15 August
+-    - cron: 0 0 15 2 *  # runs at midnight UTC every 15 February
 -
 -permissions:
 -  contents: read
@@ -2526,6 +3014,244 @@ index b65917f89e..0000000000
 -         EOF
 -        env:
 -          GH_TOKEN: ${{ github.token }}
+diff --git a/.github/workflows/nix-changes-comment.yml b/.github/workflows/nix-changes-comment.yml
+deleted file mode 100644
+index db96ff4a09..0000000000
+--- a/.github/workflows/nix-changes-comment.yml
++++ /dev/null
+@@ -1,98 +0,0 @@
+-# This action requires the following secrets to be set on the repository:
+-#   GH_USER_TOKEN: GitHub user token, to be used by ncu and to push changes
+-name: Comment on PR on Nix changes
+-
+-on:
+-  workflow_run:
+-    workflows: [Nix files edited]
+-    types: [completed]
+-
+-permissions: {}
+-
+-jobs:
+-  aggregate-results:
+-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'pull_request' }}
+-    name: Aggregate results
+-    runs-on: ubuntu-slim
+-    permissions:
+-      pull-requests: write
+-    steps:
+-      - name: Download artefacts
+-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+-        with:
+-          run-id: ${{ github.event.workflow_run.id }}
+-          # Using privileged token to be able to download file from a different workflow
+-          github-token: ${{ secrets.GH_USER_TOKEN }}
+-
+-      - name: Fetch PR data
+-        id: pr-data
+-        run: |
+-          mv requisites-*/* .
+-          ls
+-          if grep -nvHE '^/nix/store/[0-9a-df-np-sv-z]{32}-[A-Za-z0-9?=._+-]+$' requisites-*.list; then
+-            echo 'Unexpected line format in requisites list; refusing to process.' >&2
+-            exit 1
+-          fi
+-          echo "NUMBER=$(grep -E '^[0-9]+$' pr_number.txt || true)" >> "$GITHUB_OUTPUT"
+-
+-      - name: Aggregate results
+-        if: ${{ steps.pr-data.outputs.NUMBER }}
+-        run: |
+-          set -x
+-          > requisites-before.list
+-          > requisites-after.list
+-          TABLE=$(
+-            echo '| Platform | Number of requisites | Proportion of new derivations |'
+-            echo '| :-: | -: | -: |'
+-            TOTAL_BEFORE=0
+-            TOTAL_AFTER=0
+-            TOTAL_CHANGED=0
+-            QUOTE='`'
+-            for PLATFORM in x86_64-linux aarch64-linux x86_64-darwin aarch64-darwin; do
+-              BEFORE=$(wc -l < "requisites-${PLATFORM}-before.list")
+-              TOTAL_BEFORE=$(($TOTAL_BEFORE + $BEFORE))
+-              AFTER=$(wc -l < "requisites-${PLATFORM}-after.list")
+-              TOTAL_AFTER=$(($TOTAL_AFTER + $AFTER))
+-              DIFF="_no changes_"
+-              [ "$BEFORE" = "$AFTER" ] || DIFF="**$([ "$AFTER" < "$BEFORE" ] || echo '+')$(($AFTER - $BEFORE))**"
+-              CHANGED=$(git diff --no-index "requisites-${PLATFORM}-before.list" "requisites-${PLATFORM}-after.list" | grep -c '^+[^+]')
+-              TOTAL_CHANGED=$(($TOTAL_CHANGED + $CHANGED))
+-              PERCENT=100
+-              [ "$CHANGED" = "$AFTER" ] || {
+-                PERMILLE=$((1000 * $CHANGED / $AFTER))
+-                PERCENT="$((PERMILLE / 10)).$((PERMILLE % 10))"
+-              }
+-              echo "| ${QUOTE}${PLATFORM}${QUOTE} | $BEFORE -> $AFTER => $DIFF | $CHANGED / $AFTER = $PERCENT% |"
+-              awk '{ print $0 " ('"$PLATFORM"')" }' "requisites-${PLATFORM}-before.list" >> requisites-before.list
+-              awk '{ print $0 " ('"$PLATFORM"')" }' "requisites-${PLATFORM}-after.list" >> requisites-after.list
+-            done
+-
+-            DIFF="_no changes_"
+-            [ "$TOTAL_BEFORE" = "$TOTAL_AFTER" ] || DIFF="**$([ "$TOTAL_AFTER" < "$TOTAL_BEFORE" ] || echo '+')$(($TOTAL_AFTER - $TOTAL_BEFORE))**"
+-            PERCENT=100
+-            [ "$TOTAL_CHANGED" = "$TOTAL_AFTER" ] || {
+-              PERMILLE=$((1000 * $TOTAL_CHANGED / $TOTAL_AFTER))
+-              PERCENT="$((PERMILLE / 10)).$((PERMILLE % 10))"
+-            }
+-            echo "| **Total** | $TOTAL_BEFORE -> $TOTAL_AFTER => $DIFF | $TOTAL_CHANGED / $TOTAL_AFTER = $PERCENT% |"
+-          )
+-          sort -k1.45 requisites-before.list > requisites-before.sort
+-          sort -k1.45 requisites-after.list > requisites-after.sort
+-          if git diff -U0 --no-color --no-index requisites-before.sort requisites-after.sort > requisites.diff; then
+-            echo 'No changes detected.'
+-          else
+-          {
+-            echo "$TABLE"
+-            echo
+-            echo '<details><summary>Changelog</summary>'
+-            echo
+-            echo '```diff'
+-            tail -n +5 requisites.diff
+-            echo '```'
+-            echo
+-            echo '</details>'
+-          } | gh pr comment -R "$GITHUB_REPOSITORY" "$PR_NUMBER" -F -
+-          fi
+-        env:
+-          GH_TOKEN: ${{ github.token }}
+-          PR_NUMBER: ${{ steps.pr-data.outputs.NUMBER }}
+diff --git a/.github/workflows/nix-changes.yml b/.github/workflows/nix-changes.yml
+deleted file mode 100644
+index c80e9e53f5..0000000000
+--- a/.github/workflows/nix-changes.yml
++++ /dev/null
+@@ -1,128 +0,0 @@
+-# This action uses the following secrets:
+-#   CACHIX_AUTH_TOKEN: Write access to nodejs.cachix.org – without it, the cache is read-only.
+-name: Nix files edited
+-
+-on:
+-  push:
+-    branches:
+-      - main
+-      - canary
+-      - v[0-9]+.x-staging
+-      - v[0-9]+.x
+-    paths:
+-      - '**.nix'
+-      - tools/nix/**
+-      - .github/workflows/nix-changes.yml
+-  pull_request:
+-    paths:
+-      - '**.nix'
+-      - tools/nix/**
+-      - .github/workflows/nix-changes.yml
+-    types: [opened, synchronize, reopened, ready_for_review]
+-
+-concurrency:
+-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+-  cancel-in-progress: true
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  diff:
+-    if: github.event.pull_request.draft == false
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        include:
+-          - runner: ubuntu-24.04
+-            system: x86_64-linux
+-          - runner: ubuntu-24.04-arm
+-            system: aarch64-linux
+-          - runner: macos-15-intel
+-            system: x86_64-darwin
+-          - runner: macos-latest
+-            system: aarch64-darwin
+-    name: '${{ matrix.system }}: dependencies diff'
+-    runs-on: ${{ matrix.runner }}
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-        with:
+-          fetch-depth: 2
+-          persist-credentials: false
+-          sparse-checkout: |
+-            shell.nix
+-            tools/nix/
+-          sparse-checkout-cone-mode: false
+-
+-      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
+-        with:
+-          extra_nix_config: sandbox = true
+-
+-      - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866  # v17
+-        with:
+-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+-          name: nodejs
+-
+-      - name: Compute requisites after change
+-        run: ./tools/nix/list-requisites.sh > requisites-${{ matrix.system }}-after.list
+-
+-      - name: Compute requisites before change
+-        run: |
+-          BASE_SHA="$(git rev-parse HEAD^)"
+-          if [ -n "$PUSH_BEFORE_SHA" ] && [ "$PUSH_BEFORE_SHA" != "$BASE_SHA" ] \
+-            && [ "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ] \
+-            && git fetch --no-tags --depth=1 origin "$PUSH_BEFORE_SHA"; then
+-            BASE_SHA="$PUSH_BEFORE_SHA"
+-          fi
+-          git reset "$BASE_SHA" --hard
+-          ./tools/nix/list-requisites.sh > requisites-${{ matrix.system }}-before.list
+-        env:
+-          PUSH_BEFORE_SHA: ${{ github.event_name == 'push' && github.event.before || '' }}
+-
+-      - name: Output diff
+-        run: |
+-          {
+-            if diff_output="$(git diff -U0 --no-color --no-index requisites-${{ matrix.system }}-before.list requisites-${{ matrix.system }}-after.list)"; then
+-              echo 'No changes detected.'
+-            else
+-              echo '```diff'
+-              echo "$diff_output" | tail -n +5
+-              echo '```'
+-            fi
+-          } >> "$GITHUB_STEP_SUMMARY"
+-
+-      - name: Store PR number
+-        if: ${{ github.event.pull_request && matrix.system == 'x86_64-linux' }}
+-        run: echo "${{ github.event.pull_request.number }}" > pr_number.txt
+-
+-      - name: Upload requisites lists
+-        if: ${{ github.event.pull_request }}
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+-        with:
+-          name: requisites-${{ matrix.system }}
+-          path: |
+-            pr_number.*
+-            requisites-${{ matrix.system }}-before.list
+-            requisites-${{ matrix.system }}-after.list
+-
+-  lint-nix:
+-    if: github.event.pull_request.draft == false
+-    runs-on: ubuntu-slim
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-        with:
+-          persist-credentials: false
+-          sparse-checkout: '*.nix'
+-          sparse-checkout-cone-mode: false
+-      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
+-      - name: Lint Nix files
+-        run: |
+-          NIX_LINTER=$(nix-instantiate --eval --raw -E '(import ./shell.nix {}).NIX_LINTER')
+-          # Attempt to get it from cache, and fallback to building `devTools.nix` otherwise.
+-          nix-store --realise "${NIX_LINTER%/bin/*}" || nix-build -I nixpkgs=tools/nix/pkgs.nix ./tools/nix/devTools.nix --no-out-link
+-          "$NIX_LINTER" --quiet --ci && EXIT_CODE="$?" || EXIT_CODE="$?"
+-          if [ "$EXIT_CODE" != "0" ]
+-          then
+-            git --no-pager diff || true
+-            exit "$EXIT_CODE"
+-          fi
 diff --git a/.github/workflows/notify-on-push.yml b/.github/workflows/notify-on-push.yml
 deleted file mode 100644
 index 25421b8447..0000000000
@@ -2716,7 +3442,7 @@ index cfb281310a..0000000000
 -}
 diff --git a/.github/workflows/scorecard.yml b/.github/workflows/scorecard.yml
 deleted file mode 100644
-index 4a7415bc90..0000000000
+index 2663019bcc..0000000000
 --- a/.github/workflows/scorecard.yml
 +++ /dev/null
 @@ -1,81 +0,0 @@
@@ -2798,7 +3524,7 @@ index 4a7415bc90..0000000000
 -
 -      # Upload the results to GitHub's code scanning dashboard.
 -      - name: Upload to code-scanning
--        uses: github/codeql-action/upload-sarif@b96794f015dfd88f77b49b1c93e0fa7110f94c63  # v4.38.0
+-        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2  # v4.38.2
 -        with:
 -          sarif_file: results.sarif
 diff --git a/.github/workflows/stale.yml b/.github/workflows/stale.yml
@@ -2860,7 +3586,7 @@ index eb5921edb9..0000000000
 -          remove-stale-when-updated: true
 diff --git a/.github/workflows/stress-test.yml b/.github/workflows/stress-test.yml
 deleted file mode 100644
-index af1df77fe5..0000000000
+index e47c114d2f..0000000000
 --- a/.github/workflows/stress-test.yml
 +++ /dev/null
 @@ -1,114 +0,0 @@
@@ -2899,10 +3625,10 @@ index af1df77fe5..0000000000
 -        type: string
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  XCODE_VERSION: '16.4'
 -  CLANG_VERSION: '19'
--  RUSTC_VERSION: '1.82'
+-  RUSTC_VERSION: '1.86'
 -
 -permissions:
 -  contents: read
@@ -2926,7 +3652,7 @@ index af1df77fe5..0000000000
 -          path: node
 -      - name: Install Clang ${{ env.CLANG_VERSION }}
 -        if: runner.os == 'Linux'
--        uses: ./node/.github/actions/install-clang
+-        uses: $/.github/actions/install-clang
 -        with:
 -          clang-version: ${{ env.CLANG_VERSION }}
 -      - name: Set up Xcode ${{ env.XCODE_VERSION }}
@@ -2980,10 +3706,10 @@ index af1df77fe5..0000000000
 -            "$TEST_PATH"
 diff --git a/.github/workflows/test-internet.yml b/.github/workflows/test-internet.yml
 deleted file mode 100644
-index ee3a85d10f..0000000000
+index 09f52ed2aa..0000000000
 --- a/.github/workflows/test-internet.yml
 +++ /dev/null
-@@ -1,64 +0,0 @@
+@@ -1,70 +0,0 @@
 -name: Test internet
 -
 -on:
@@ -3017,10 +3743,11 @@ index ee3a85d10f..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
--  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang
--  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++
+-  CLANG_VERSION: '19'
+-  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
 -  SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
 -  SCCACHE_IDLE_TIMEOUT: '0'
 -
@@ -3035,10 +3762,15 @@ index ee3a85d10f..0000000000
 -      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 -        with:
 -          persist-credentials: false
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
+-        with:
+-          clang-version: ${{ env.CLANG_VERSION }}
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -3048,12 +3780,91 @@ index ee3a85d10f..0000000000
 -        run: make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn"
 -      - name: Test Internet
 -        run: make test-internet -j4 V=1;
+diff --git a/.github/workflows/test-linux-perfetto.yml b/.github/workflows/test-linux-perfetto.yml
+deleted file mode 100644
+index befb170070..0000000000
+--- a/.github/workflows/test-linux-perfetto.yml
++++ /dev/null
+@@ -1,73 +0,0 @@
+-name: Test Linux (with Perfetto)
+-
+-on:
+-  workflow_dispatch:
+-  pull_request:
+-    # Only targeting paths specific to the vendored version of Perfetto, `test-shared`
+-    # is taking care of rest of the coverage.
+-    paths:
+-      - .github/workflows/test-linux-perfetto.yml
+-      - common.gypi
+-      - configure.py
+-      - deps/perfetto/**
+-      - node.gyp
+-      - node.gypi
+-      - tools/v8_gypfiles/v8.gyp
+-    types: [opened, synchronize, reopened, ready_for_review]
+-
+-concurrency:
+-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+-  cancel-in-progress: true
+-
+-env:
+-  PYTHON_VERSION: '3.15'
+-  FLAKY_TESTS: keep_retrying
+-  CLANG_VERSION: '19'
+-  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
+-  SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
+-  SCCACHE_IDLE_TIMEOUT: '0'
+-  RUSTC_VERSION: '1.86'
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  test-perfetto:
+-    if: github.event.pull_request.draft == false
+-    runs-on: ubuntu-24.04-arm
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-        with:
+-          persist-credentials: false
+-          path: node
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
+-        with:
+-          clang-version: ${{ env.CLANG_VERSION }}
+-      - name: Install Rust ${{ env.RUSTC_VERSION }}
+-        run: |
+-          rustup override set "$RUSTC_VERSION"
+-          rustup --version
+-      - name: Set up Python ${{ env.PYTHON_VERSION }}
+-        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+-        with:
+-          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
+-      - name: Set up sccache
+-        if: github.base_ref == 'main' || github.ref_name == 'main'
+-        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
+-        with:
+-          version: v0.17.0
+-      - name: Build
+-        working-directory: node
+-        run: make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn --v8-enable-temporal-support --with-perfetto"
+-      - name: Get trace_processor
+-        working-directory: node
+-        run: make tools/perfetto/trace_processor_shell
+-      - name: Test
+-        working-directory: node
+-        run: make test-ci -j1 V=1 TEST_CI_ARGS="-p actions --measure-flakiness 9"
+-      - name: Ensure running tests did not cause any change in the tree
+-        working-directory: node
+-        run: git add -A && git diff --name-only --exit-code --staged
 diff --git a/.github/workflows/test-linux-quic.yml b/.github/workflows/test-linux-quic.yml
 deleted file mode 100644
-index c1a57509c0..0000000000
+index f9ccef8597..0000000000
 --- a/.github/workflows/test-linux-quic.yml
 +++ /dev/null
-@@ -1,69 +0,0 @@
+@@ -1,81 +0,0 @@
 -name: Test Linux (with QUIC)
 -
 -on:
@@ -3064,6 +3875,7 @@ index c1a57509c0..0000000000
 -      - configure.py
 -      - node.gyp
 -      - node.gypi
+-      - deps/v8/**
 -      - deps/ngtcp2/**
 -      - deps/nghttp3/**
 -      - deps/openssl/**
@@ -3086,12 +3898,14 @@ index c1a57509c0..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
--  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang
--  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++
+-  CLANG_VERSION: '19'
+-  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
 -  SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
 -  SCCACHE_IDLE_TIMEOUT: '0'
+-  RUSTC_VERSION: '1.86'
 -
 -permissions:
 -  contents: read
@@ -3105,10 +3919,19 @@ index c1a57509c0..0000000000
 -        with:
 -          persist-credentials: false
 -          path: node
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
+-        with:
+-          clang-version: ${{ env.CLANG_VERSION }}
+-      - name: Install Rust ${{ env.RUSTC_VERSION }}
+-        run: |
+-          rustup override set "$RUSTC_VERSION"
+-          rustup --version
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -3116,7 +3939,7 @@ index c1a57509c0..0000000000
 -          version: v0.17.0
 -      - name: Build
 -        working-directory: node
--        run: make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn --experimental-quic"
+-        run: make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn --v8-enable-temporal-support --experimental-quic"
 -      - name: Test
 -        working-directory: node
 -        run: make test-ci -j1 V=1 TEST_CI_ARGS="-p actions --measure-flakiness 9"
@@ -3125,10 +3948,10 @@ index c1a57509c0..0000000000
 -        run: git add -A && git diff --name-only --exit-code --staged
 diff --git a/.github/workflows/test-linux.yml b/.github/workflows/test-linux.yml
 deleted file mode 100644
-index 03f349fbed..0000000000
+index cf10c65467..0000000000
 --- a/.github/workflows/test-linux.yml
 +++ /dev/null
-@@ -1,85 +0,0 @@
+@@ -1,100 +0,0 @@
 -name: Test Linux
 -
 -on:
@@ -3140,7 +3963,9 @@ index 03f349fbed..0000000000
 -      - tools/actions/**
 -      - tools/clang-format/**
 -      - tools/dep_updaters/**
+-      - tools/nix/**
 -      - test/internet/**
+-      - '**.nix'
 -      - .github/**
 -      - '!.github/workflows/test-linux.yml'
 -    types: [opened, synchronize, reopened, ready_for_review]
@@ -3157,7 +3982,9 @@ index 03f349fbed..0000000000
 -      - tools/actions/**
 -      - tools/clang-format/**
 -      - tools/dep_updaters/**
+-      - tools/nix/**
 -      - test/internet/**
+-      - '**.nix'
 -      - .github/**
 -      - '!.github/workflows/test-linux.yml'
 -
@@ -3166,12 +3993,14 @@ index 03f349fbed..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -  FLAKY_TESTS: keep_retrying
--  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang
--  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++
+-  CLANG_VERSION: '19'
+-  CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang-19
+-  CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} clang++-19
 -  SCCACHE_GHA_ENABLED: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
 -  SCCACHE_IDLE_TIMEOUT: '0'
+-  RUSTC_VERSION: '1.86'
 -
 -permissions:
 -  contents: read
@@ -3189,10 +4018,19 @@ index 03f349fbed..0000000000
 -        with:
 -          persist-credentials: false
 -          path: node
+-      - name: Install Clang ${{ env.CLANG_VERSION }}
+-        uses: $/.github/actions/install-clang
+-        with:
+-          clang-version: ${{ env.CLANG_VERSION }}
+-      - name: Install Rust ${{ env.RUSTC_VERSION }}
+-        run: |
+-          rustup override set "$RUSTC_VERSION"
+-          rustup --version
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -3200,7 +4038,7 @@ index 03f349fbed..0000000000
 -          version: v0.17.0
 -      - name: Build
 -        working-directory: node
--        run: make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn"
+-        run: make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn --v8-enable-temporal-support"
 -      - name: Test
 -        working-directory: node
 -        run: make test-ci -j1 V=1 TEST_CI_ARGS="-p actions --measure-flakiness 9"
@@ -3216,22 +4054,39 @@ index 03f349fbed..0000000000
 -          DIR: dir%20with $unusual"chars?'åß∂ƒ©∆¬…`
 diff --git a/.github/workflows/test-macos.yml b/.github/workflows/test-macos.yml
 deleted file mode 100644
-index 29b9d4b0b9..0000000000
+index 22292f2112..0000000000
 --- a/.github/workflows/test-macos.yml
 +++ /dev/null
-@@ -1,102 +0,0 @@
+@@ -1,142 +0,0 @@
 -name: Test macOS
 -
 -on:
 -  pull_request:
 -    types: [opened, synchronize, reopened, ready_for_review]
 -    paths-ignore:
--      - .mailmap
 -      - '**.md'
--      - AUTHORS
+-      - '**.nix'
+-      - eslint.config.mjs
+-      - '**/eslint.config_partial.mjs'
+-      - android-configure
+-      - android-configure.py
+-      - android-patches/**
+-      - benchmarks/**
+-      - codecov.yml
 -      - doc/**
+-      - pyproject.yml
+-      - tsconfig.json
 -      - test/internet/**
--      - .github/**
+-      - tools/actions/**
+-      - tools/dep_updaters/**
+-      - tools/doc/**
+-      - tools/eslint-rules/**
+-      - tools/eslint/**
+-      - tools/lint-md/**
+-      - tools/nix/**
+-      - typings/**
+-      - vcbuild.bat
+-      - .**
 -      - '!.github/workflows/test-macos.yml'
 -  push:
 -    branches:
@@ -3240,12 +4095,29 @@ index 29b9d4b0b9..0000000000
 -      - v[0-9]+.x-staging
 -      - v[0-9]+.x
 -    paths-ignore:
--      - .mailmap
 -      - '**.md'
--      - AUTHORS
+-      - '**.nix'
+-      - eslint.config.mjs
+-      - '**/eslint.config_partial.mjs'
+-      - android-configure
+-      - android-configure.py
+-      - android-patches/**
+-      - benchmarks/**
+-      - codecov.yml
 -      - doc/**
+-      - pyproject.yml
+-      - tsconfig.json
 -      - test/internet/**
--      - .github/**
+-      - tools/actions/**
+-      - tools/dep_updaters/**
+-      - tools/doc/**
+-      - tools/eslint-rules/**
+-      - tools/eslint/**
+-      - tools/lint-md/**
+-      - tools/nix/**
+-      - typings/**
+-      - vcbuild.bat
+-      - .**
 -      - '!.github/workflows/test-macos.yml'
 -
 -concurrency:
@@ -3253,9 +4125,10 @@ index 29b9d4b0b9..0000000000
 -  cancel-in-progress: true
 -
 -env:
--  PYTHON_VERSION: '3.14'
--  XCODE_VERSION: '16.1'
+-  PYTHON_VERSION: '3.15'
+-  XCODE_VERSION: '16.4'
 -  FLAKY_TESTS: keep_retrying
+-  RUSTC_VERSION: '1.86'
 -
 -permissions:
 -  contents: read
@@ -3265,7 +4138,7 @@ index 29b9d4b0b9..0000000000
 -    if: github.event.pull_request.draft == false
 -    strategy:
 -      fail-fast: false
--    runs-on: macos-14
+-    runs-on: macos-15
 -    env:
 -      CC: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} gcc
 -      CXX: ${{ (github.base_ref == 'main' || github.ref_name == 'main') && 'sccache' || '' }} g++
@@ -3280,8 +4153,13 @@ index 29b9d4b0b9..0000000000
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
 -      - name: Set up Xcode ${{ env.XCODE_VERSION }}
 -        run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app
+-      - name: Install Rust ${{ env.RUSTC_VERSION }}
+-        run: |
+-          rustup override set "$RUSTC_VERSION"
+-          rustup --version
 -      - name: Set up sccache
 -        if: github.base_ref == 'main' || github.ref_name == 'main'
 -        uses: Mozilla-Actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba  # v0.0.11
@@ -3310,7 +4188,7 @@ index 29b9d4b0b9..0000000000
 -          df -h
 -          echo "::endgroup::"
 -      - name: Build
--        run: make -C node build-ci -j$(getconf _NPROCESSORS_ONLN) V=1 CONFIG_FLAGS="--error-on-warn"
+-        run: make -C node build-ci -j$(getconf _NPROCESSORS_ONLN) V=1 CONFIG_FLAGS="--error-on-warn --v8-enable-temporal-support"
 -      - name: Free Space After Build
 -        run: df -h
 -      - name: Test
@@ -3322,9 +4200,288 @@ index 29b9d4b0b9..0000000000
 -          ./tools/test.py --flaky-tests keep_retrying -p actions -j 4
 -        env:
 -          DIR: dir%20with $unusual"chars?'åß∂ƒ©∆¬…`
+diff --git a/.github/workflows/test-shared.yml b/.github/workflows/test-shared.yml
+deleted file mode 100644
+index 8292ac253f..0000000000
+--- a/.github/workflows/test-shared.yml
++++ /dev/null
+@@ -1,273 +0,0 @@
+-# This action uses the following secrets:
+-#   CACHIX_AUTH_TOKEN: Write access to nodejs.cachix.org – without it, the cache is read-only.
+-name: Test Shared libraries
+-
+-on:
+-  pull_request:
+-    paths-ignore:
+-      - '**.md'
+-      - eslint.config.mjs
+-      - '**/eslint.config_partial.mjs'
+-      - android-configure
+-      - android-configure.py
+-      - android-patches/**
+-      - benchmarks/**
+-      - codecov.yml
+-      - deps/LIEF/**
+-      - deps/ada/**
+-      - deps/brotli/**
+-      - deps/cares/**
+-      - deps/corepack/**
+-      - deps/crates/**
+-      - deps/googletest/**
+-      - deps/histogram/**
+-      - deps/icu-small/**
+-      - deps/icu-tmp/**
+-      - deps/libffi/**
+-      - deps/llhttp/**
+-      - deps/merve/**
+-      - deps/nbytes/**
+-      - deps/nghttp2/**
+-      - deps/ngtcp2/**
+-      - deps/openssl/*/**
+-      - deps/perfetto/**
+-      - deps/simdjson/**
+-      - deps/sqlite/**
+-      - deps/uv/**
+-      - deps/uvwasi/**
+-      - deps/v8/third_party/abseil-cpp/**
+-      - deps/v8/third_party/highway/**
+-      - deps/v8/third_party/simdutf/**
+-      - deps/zlib/**
+-      - deps/zstd/**
+-      - doc/**
+-      - pyproject.yml
+-      - tsconfig.json
+-      - test/internet/**
+-      - tools/**
+-      - '!tools/gyp/**'
+-      - '!tools/nix/**'
+-      - '!tools/v8/**'
+-      - '!tools/v8_gypfiles/**'
+-      - tools/nix/list-requisites.sh
+-      - typings/**
+-      - vcbuild.bat
+-      - .**
+-      - '!.github/workflows/test-shared.yml'
+-      - '!.github/workflows/build-shared.yml'
+-    types: [opened, synchronize, reopened, ready_for_review]
+-  push:
+-    branches:
+-      - main
+-      - canary
+-      - v[0-9]+.x-staging
+-      - v[0-9]+.x
+-    paths-ignore:
+-      - '**.md'
+-      - eslint.config.mjs
+-      - '**/eslint.config_partial.mjs'
+-      - android-configure
+-      - android-configure.py
+-      - android-patches/**
+-      - benchmarks/**
+-      - codecov.yml
+-      - deps/LIEF/**
+-      - deps/ada/**
+-      - deps/brotli/**
+-      - deps/cares/**
+-      - deps/corepack/**
+-      - deps/crates/**
+-      - deps/googletest/**
+-      - deps/histogram/**
+-      - deps/icu-small/**
+-      - deps/icu-tmp/**
+-      - deps/libffi/**
+-      - deps/llhttp/**
+-      - deps/merve/**
+-      - deps/nbytes/**
+-      - deps/nghttp2/**
+-      - deps/ngtcp2/**
+-      - deps/openssl/*/**
+-      - deps/perfetto/**
+-      - deps/simdjson/**
+-      - deps/sqlite/**
+-      - deps/uv/**
+-      - deps/uvwasi/**
+-      - deps/v8/third_party/abseil-cpp/**
+-      - deps/v8/third_party/highway/**
+-      - deps/v8/third_party/simdutf/**
+-      - deps/zlib/**
+-      - deps/zstd/**
+-      - doc/**
+-      - pyproject.yml
+-      - tsconfig.json
+-      - test/internet/**
+-      - tools/**
+-      - '!tools/gyp/**'
+-      - '!tools/nix/**'
+-      - '!tools/v8/**'
+-      - '!tools/v8_gypfiles/**'
+-      - tools/nix/list-requisites.sh
+-      - typings/**
+-      - vcbuild.bat
+-      - .**
+-      - '!.github/workflows/test-shared.yml'
+-      - '!.github/workflows/build-shared.yml'
+-
+-concurrency:
+-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+-  cancel-in-progress: true
+-
+-permissions:
+-  contents: read
+-
+-jobs:
+-  build-tarball:
+-    if: github.event.pull_request.draft == false
+-    name: ${{ github.event_name == 'workflow_dispatch' && 'Skipped job' || 'Build slim tarball' }}
+-    runs-on: ubuntu-slim
+-    steps:
+-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+-        with:
+-          persist-credentials: false
+-
+-      - name: Make tarball
+-        run: |
+-          export DATESTRING=$(date "+%Y-%m-%d")
+-          export COMMIT=$(git rev-parse --short=10 "$GITHUB_SHA")
+-          ./configure && make tar -j4 SKIP_XZ=1 SKIP_SHARED_DEPS=1 GZIP_COMPRESSION=6
+-        env:
+-          DISTTYPE: nightly
+-
+-      - name: Upload tarball artifact
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+-        with:
+-          path: '*.tar.gz'
+-          archive: false
+-
+-  build:
+-    needs: build-tarball
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        include:
+-          - runner: ubuntu-24.04
+-            system: x86_64-linux
+-            # Exercise the trace-event code against a perfetto-enabled V8.
+-            perfetto: true
+-          # built separately in build-aarch64-linux-v8
+-          # - runner: ubuntu-24.04-arm
+-          #   system: aarch64-linux
+-          - runner: macos-15-intel
+-            system: x86_64-darwin
+-          - runner: macos-latest
+-            system: aarch64-darwin
+-    name: '${{ matrix.system }}: with shared libraries${{ matrix.perfetto && '' and perfetto'' || '''' }}'
+-    uses: $/.github/workflows/build-shared.yml
+-    with:
+-      runner: ${{ matrix.runner }}
+-      with-sccache: ${{ github.base_ref == 'main' || github.ref_name == 'main' }}
+-      extra-nix-flags: ${{ matrix.perfetto && '--arg withPerfetto true' || '' }}
+-    secrets:
+-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+-
+-  build-aarch64-linux-v8:
+-    needs: build-tarball
+-    runs-on: ubuntu-24.04-arm
+-    name: 'aarch64-linux: Cache V8 build'
+-    outputs:
+-      local-cache: ${{ steps.upload.outcome != 'skipped' && 'true' || '' }}
+-      matrix: ${{ steps.query.outputs.matrix }}
+-    env:
+-      HAS_CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN && 'true' }}
+-    steps:
+-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+-        with:
+-          path: tarballs
+-
+-      - name: Extract tarball
+-        shell: bash
+-        run: |
+-          tar xzf tarballs/*.tar.gz -C "$RUNNER_TEMP"
+-          echo "TAR_DIR=$RUNNER_TEMP/$(basename tarballs/*.tar.gz .tar.gz)" >> "$GITHUB_ENV"
+-
+-      - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
+-        with:
+-          extra_nix_config: sandbox = true
+-
+-      - name: Evaluate V8 derivation, check its cache status
+-        id: v8-drv
+-        run: |
+-          V8_DRV=$(
+-            nix-instantiate -E "builtins.filter (p: p.pname == ''v8'') (import $TAR_DIR/tools/nix/ci-shell.nix {}).buildInputs"
+-          )
+-          V8_STORE_PATH=$(nix-store -q --outputs "$V8_DRV")
+-          echo "V8_DRV=$V8_DRV" >> "$GITHUB_OUTPUT"
+-          set -x
+-          [ "$(curl -ISsw "%{http_code}" -o /dev/null "https://nodejs.cachix.org/$(basename ${V8_STORE_PATH%-v8-*}).narinfo")" != "200" ] ||
+-            echo "ALREADY_CACHED=true" >> "$GITHUB_OUTPUT"
+-
+-      - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866  # v17
+-        if: ${{ steps.v8-drv.outputs.ALREADY_CACHED != 'true' }}
+-        with:
+-          name: nodejs
+-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+-
+-      - name: Build V8 to cache it
+-        if: ${{ steps.v8-drv.outputs.ALREADY_CACHED != 'true' }}
+-        run: nix-store --export "$(nix-build "$V8_DRV")" > libv8-aarch64-linux.nar
+-        env:
+-          V8_DRV: ${{ steps.v8-drv.outputs.V8_DRV }}
+-
+-      - name: Upload libv8-aarch64-linux.nar
+-        if: ${{ steps.v8-drv.outputs.ALREADY_CACHED != 'true' && env.HAS_CACHIX_AUTH_TOKEN != 'true' }}
+-        id: upload
+-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+-        with:
+-          name: libv8-aarch64-linux.nar
+-          path: libv8-aarch64-linux.nar
+-
+-      - name: Collect matrix of support OpenSSL versions
+-        id: query
+-        run: |
+-          echo "matrix=$(
+-            nix-instantiate --eval --strict --json -E "
+-              let
+-                matrix = import $TAR_DIR/tools/nix/openssl-matrix.nix {};
+-              in
+-              builtins.map (attr: { inherit attr; inherit (builtins.getAttr attr matrix) name; }) (builtins.attrNames matrix)
+-            "
+-          )" >> "$GITHUB_OUTPUT"
+-
+-  # Builds and tests Node.js with shared libraries against every supported
+-  # OpenSSL release version available in the repo-pinned nixpkgs. The default
+-  # shared `openssl` from tools/nix/sharedLibDeps.nix is overridden per matrix
+-  # entry, while all other shared libs remain at their defaults. Only runs on
+-  # a single runner/system (aarch64-linux) to keep the matrix to a minimum.
+-  build-openssl:
+-    needs: build-aarch64-linux-v8
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        openssl: ${{ fromJSON(needs.build-aarch64-linux-v8.outputs.matrix) }}
+-    name: 'aarch64-linux: with shared ${{ matrix.openssl.name }}'
+-    uses: $/.github/workflows/build-shared.yml
+-    with:
+-      runner: ubuntu-24.04-arm
+-      v8-nar: ${{ needs.build-aarch64-linux-v8.outputs.local-cache && 'libv8-aarch64-linux.nar' }}
+-      pkcs11-store-test: ${{ matrix.openssl.attr == 'openssl' }}
+-      # Override just the `openssl` attr of the default shared-lib set with
+-      # the matrix-selected nixpkgs attribute (e.g. `openssl_3_6`). All
+-      # other shared libs (brotli, cares, libuv, …) keep their defaults.
+-      # `permittedInsecurePackages` whitelists just the matrix-selected
+-      # release (e.g. `openssl-1.1.1w`) so EOL-with-extended-support
+-      # cycles evaluate without relaxing nixpkgs' meta check globally.
+-      extra-nix-flags: |
+-        --arg useSeparateDerivationForV8 ${{ needs.build-aarch64-linux-v8.outputs.local-cache && '"$(nix-store --import < libv8-aarch64-linux.nar)"' || 'true' }} \
+-        --arg sharedLibDeps "(import $TAR_DIR/tools/nix/sharedLibDeps.nix {}) // {
+-            openssl = builtins.getAttr \"${{
+-              !contains(matrix.openssl.attr, '$') && !contains(matrix.openssl.attr, '\"') && !contains(matrix.openssl.attr, '\') && !contains(matrix.openssl.attr, '`') && matrix.openssl.attr
+-            }}\" (import $TAR_DIR/tools/nix/openssl-matrix.nix {});
+-          }" \
+-    secrets:
+-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 diff --git a/.github/workflows/timezone-update.yml b/.github/workflows/timezone-update.yml
 deleted file mode 100644
-index 481c20da4e..0000000000
+index abe4516db4..0000000000
 --- a/.github/workflows/timezone-update.yml
 +++ /dev/null
 @@ -1,74 +0,0 @@
@@ -3370,14 +4527,14 @@ index 481c20da4e..0000000000
 -
 -      - name: Compare versions
 -        run: |
--          echo "Comparing current version ${{ env.current_version }} to new version ${{ env.new_version }}"
+-          echo "Comparing current version $current_version to new version $new_version"
 -
 -      - run: ./tools/dep_updaters/update-timezone.mjs
 -        if: ${{ env.new_version != env.current_version }}
 -
 -      - name: Update the expected timezone version in test
 -        if: ${{ env.new_version != env.current_version }}
--        run: echo "${{ env.new_version }}" > test/fixtures/tz-version.txt
+-        run: printf '%s\n' "$new_version" > test/fixtures/tz-version.txt
 -
 -      - name: Open Pull Request
 -        if: ${{ env.new_version != env.current_version }}
@@ -3404,10 +4561,10 @@ index 481c20da4e..0000000000
 -          update-pull-request-title-and-body: true
 diff --git a/.github/workflows/tools.yml b/.github/workflows/tools.yml
 deleted file mode 100644
-index 89ed96f31d..0000000000
+index 8e4c279475..0000000000
 --- a/.github/workflows/tools.yml
 +++ /dev/null
-@@ -1,321 +0,0 @@
+@@ -1,365 +0,0 @@
 -name: Tools and deps update
 -on:
 -  schedule:
@@ -3436,13 +4593,17 @@ index 89ed96f31d..0000000000
 -          - histogram
 -          - icu
 -          - inspector_protocol
+-          - libffi
 -          - libuv
+-          - lief
 -          - llhttp
 -          - minimatch
 -          - nbytes
+-          - nixpkgs-unstable
 -          - nghttp2
 -          - nghttp3
 -          - ngtcp2
+-          - perfetto
 -          - postject
 -          - root-certificates
 -          - simdjson
@@ -3454,7 +4615,7 @@ index 89ed96f31d..0000000000
 -          - zstd
 -
 -env:
--  PYTHON_VERSION: '3.14'
+-  PYTHON_VERSION: '3.15'
 -
 -permissions:
 -  contents: read
@@ -3557,6 +4718,7 @@ index 89ed96f31d..0000000000
 -          - id: icu
 -            subsystem: deps
 -            label: dependencies, test, icu
+-            requires-python: true
 -            run: |
 -              ./tools/dep_updaters/update-icu.sh > temp-output
 -              cat temp-output
@@ -3565,8 +4727,17 @@ index 89ed96f31d..0000000000
 -          - id: inspector_protocol
 -            subsystem: deps
 -            label: dependencies, inspector
+-            requires-python: true
 -            run: |
 -              ./tools/dep_updaters/update-inspector-protocol.sh > temp-output
+-              cat temp-output
+-              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
+-              rm temp-output
+-          - id: libffi
+-            subsystem: deps
+-            label: dependencies, ffi
+-            run: |
+-              ./tools/dep_updaters/update-libffi.sh > temp-output
 -              cat temp-output
 -              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
 -              rm temp-output
@@ -3575,6 +4746,15 @@ index 89ed96f31d..0000000000
 -            label: dependencies
 -            run: |
 -              ./tools/dep_updaters/update-libuv.sh > temp-output
+-              cat temp-output
+-              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
+-              rm temp-output
+-          - id: lief
+-            subsystem: deps
+-            label: dependencies, dont-land-on-v22.x
+-            requires-python: true
+-            run: |
+-              ./tools/dep_updaters/update-lief.sh > temp-output
 -              cat temp-output
 -              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
 -              rm temp-output
@@ -3602,6 +4782,17 @@ index 89ed96f31d..0000000000
 -              cat temp-output
 -              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
 -              rm temp-output
+-          - id: nixpkgs-unstable
+-            subsystem: tools
+-            # dont-land labels are there so we can guarantee released versions of
+-            # Node.js can be built with the same env along the whole release line life – or
+-            # at least we can detect and document necessary updates.
+-            label: tools, dont-land-on-v22.x, dont-land-on-v24.x, dont-land-on-v26.x
+-            run: |
+-              ./tools/dep_updaters/update-nixpkgs-pin.sh > temp-output
+-              cat temp-output
+-              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
+-              rm temp-output
 -          - id: nghttp2
 -            subsystem: deps
 -            label: dependencies
@@ -3623,6 +4814,14 @@ index 89ed96f31d..0000000000
 -            label: dependencies
 -            run: |
 -              ./tools/dep_updaters/update-ngtcp2.sh > temp-output
+-              cat temp-output
+-              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
+-              rm temp-output
+-          - id: perfetto
+-            subsystem: deps
+-            label: dependencies
+-            run: |
+-              ./tools/dep_updaters/update-perfetto.sh > temp-output
 -              cat temp-output
 -              tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
 -              rm temp-output
@@ -3701,12 +4900,14 @@ index 89ed96f31d..0000000000
 -        with:
 -          persist-credentials: false
 -      - name: Set up Python ${{ env.PYTHON_VERSION }}
--        if: |
--          (matrix.id == 'icu' || matrix.id == 'inspector_protocol') &&
--          (github.event_name == 'schedule' || inputs.id == 'all' || inputs.id == matrix.id)
+-        if: matrix.requires-python && (github.event_name == 'schedule' || inputs.id == 'all' || inputs.id == matrix.id)
 -        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
 -        with:
 -          python-version: ${{ env.PYTHON_VERSION }}
+-          allow-prereleases: true
+-      - name: Set up Nix
+-        if: matrix.id == 'nixpkgs-unstable' && (github.event_name == 'schedule' || inputs.id == 'all' || inputs.id == matrix.id)
+-        uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24  # v31.11.1
 -      - run: ${{ matrix.run }}
 -        if: github.event_name == 'schedule' || inputs.id == 'all' || inputs.id == matrix.id
 -        env:
@@ -3714,7 +4915,7 @@ index 89ed96f31d..0000000000
 -      - name: Generate commit message if not set
 -        if: env.COMMIT_MSG == '' && (github.event_name == 'schedule' || inputs.id == 'all' || inputs.id == matrix.id)
 -        run: |
--          echo "COMMIT_MSG=${{ matrix.subsystem }}: update ${{ matrix.id }} to ${{ env.NEW_VERSION }}" >> "$GITHUB_ENV"
+-          echo "COMMIT_MSG=${{ matrix.subsystem }}: update ${{ matrix.id }} to $NEW_VERSION" >> "$GITHUB_ENV"
 -      - uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1  # v8.1.1
 -        if: github.event_name == 'schedule' || inputs.id == 'all' || inputs.id == matrix.id
 -        # Creates a PR or update the Action's existing PR, or
@@ -3731,10 +4932,10 @@ index 89ed96f31d..0000000000
 -          author: Node.js GitHub Bot <github-bot@iojs.org>
 diff --git a/.github/workflows/update-openssl.yml b/.github/workflows/update-openssl.yml
 deleted file mode 100644
-index 10eb3289a1..0000000000
+index b81a260312..0000000000
 --- a/.github/workflows/update-openssl.yml
 +++ /dev/null
-@@ -1,61 +0,0 @@
+@@ -1,69 +0,0 @@
 -name: OpenSSL update
 -on:
 -  schedule:
@@ -3764,6 +4965,7 @@ index 10eb3289a1..0000000000
 -        env:
 -          GITHUB_TOKEN: ${{ secrets.GH_USER_TOKEN }}
 -      - name: Create PR with first commit
+-        id: create-pull-request
 -        if: env.NEW_VERSION
 -        uses: gr2m/create-or-update-pull-request-action@b65137ca591da0b9f43bad7b24df13050ea45d1b  # v1.10.1
 -        # Creates a PR with the new OpenSSL source code committed
@@ -3778,6 +4980,7 @@ index 10eb3289a1..0000000000
 -          title: 'deps: update OpenSSL to ${{ env.NEW_VERSION }}'
 -          path: deps/openssl
 -          update-pull-request-title-and-body: true
+-          draft: true
 -      - name: Regenerate platform specific files
 -        if: env.NEW_VERSION
 -        run: |
@@ -3796,6 +4999,12 @@ index 10eb3289a1..0000000000
 -          branch: actions/tools-update-openssl  # Custom branch *just* for this Action.
 -          commit-message: 'deps: update archs files for openssl-${{ env.NEW_VERSION }}'
 -          path: deps/openssl
+-      - name: Mark PR as ready for review
+-        if: env.NEW_VERSION
+-        env:
+-          GITHUB_TOKEN: ${{ secrets.GH_USER_TOKEN }}
+-          PR_ID: ${{ steps.create-pull-request.outputs.pull-request-number }}
+-        run: gh --repo "$GITHUB_REPOSITORY" pr ready "$PR_ID"
 diff --git a/.github/workflows/update-v8.yml b/.github/workflows/update-v8.yml
 deleted file mode 100644
 index 8e71e56389..0000000000

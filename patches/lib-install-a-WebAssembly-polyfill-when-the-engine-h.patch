@@ -15,10 +15,10 @@ jitless/frozen-intrinsics host gates in smoke-host.
  2 files changed, 113 insertions(+)
 
 diff --git a/LICENSE b/LICENSE
-index 9cc3315dd3..b876545603 100644
+index fc7b8c7d21..53440510b5 100644
 --- a/LICENSE
 +++ b/LICENSE
-@@ -2944,3 +2944,26 @@ The externally maintained libraries used by Node.js are:
+@@ -2921,3 +2921,26 @@ The externally maintained libraries used by Node.js are:
      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
      SOFTWARE.
    """
@@ -46,10 +46,10 @@ index 9cc3315dd3..b876545603 100644
 +    SOFTWARE.
 +  """
 diff --git a/lib/internal/process/pre_execution.js b/lib/internal/process/pre_execution.js
-index d17da5d977..3f54af0958 100644
+index 96c6a5c757..626dec351b 100644
 --- a/lib/internal/process/pre_execution.js
 +++ b/lib/internal/process/pre_execution.js
-@@ -9,6 +9,7 @@ const {
+@@ -10,6 +10,7 @@ const {
    DatePrototypeGetMinutes,
    DatePrototypeGetMonth,
    DatePrototypeGetSeconds,
@@ -57,7 +57,7 @@ index d17da5d977..3f54af0958 100644
    NumberParseInt,
    ObjectDefineProperty,
    ObjectFreeze,
-@@ -109,6 +110,7 @@ function prepareExecution(options) {
+@@ -111,6 +112,7 @@ function prepareExecution(options) {
  
    // Patch the process object and get the resolved main entry point.
    const mainEntry = patchProcessObject(expandArgv1);
@@ -65,7 +65,7 @@ index d17da5d977..3f54af0958 100644
    setupTraceCategoryState();
    setupInspectorHooks();
    setupNetworkInspection();
-@@ -364,6 +366,94 @@ function setupEventsource() {
+@@ -449,6 +451,94 @@ function setupEventsource() {
    }
  }
  

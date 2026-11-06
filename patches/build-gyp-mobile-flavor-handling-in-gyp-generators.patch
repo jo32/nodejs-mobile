@@ -19,8 +19,8 @@ Co-authored-by: Julia Samól <j.samol@papers.ch>
  tools/gyp/pylib/gyp/common.py          |   2 +-
  tools/gyp/pylib/gyp/generator/make.py  |  38 ++++-----
  tools/gyp/pylib/gyp/generator/ninja.py | 108 ++++++++++++++++---------
- tools/gyp/pylib/gyp/xcode_emulation.py |  17 +++-
- 4 files changed, 102 insertions(+), 63 deletions(-)
+ tools/gyp/pylib/gyp/xcode_emulation.py |  34 ++++++--
+ 4 files changed, 117 insertions(+), 65 deletions(-)
 
 diff --git a/tools/gyp/pylib/gyp/common.py b/tools/gyp/pylib/gyp/common.py
 index 223ce47b00..52e35b74d8 100644
@@ -552,15 +552,47 @@ index 3ceaf470ce..f47d00e599 100644
 +                )
 \ No newline at end of file
 diff --git a/tools/gyp/pylib/gyp/xcode_emulation.py b/tools/gyp/pylib/gyp/xcode_emulation.py
-index d13eaa9af2..ef010d6961 100644
+index d13eaa9af2..f380bd41e7 100644
 --- a/tools/gyp/pylib/gyp/xcode_emulation.py
 +++ b/tools/gyp/pylib/gyp/xcode_emulation.py
-@@ -552,8 +552,10 @@ class XcodeSettings:
+@@ -54,9 +54,9 @@ class XcodeArchsDefault:
+     def _VariableMapping(self, sdkroot):
+         """Returns the dictionary of variable mapping depending on the SDKROOT."""
+         sdkroot = sdkroot.lower()
+-        if "iphoneos" in sdkroot:
++        if "iphoneos" in sdkroot or "appletvos" in sdkroot:
+             return self._archs["ios"]
+-        elif "iphonesimulator" in sdkroot:
++        elif "iphonesimulator" in sdkroot or "appletvsimulator" in sdkroot:
+             return self._archs["iossim"]
+         else:
+             return self._archs["mac"]
+@@ -180,6 +180,9 @@ class XcodeSettings:
+             self._ConvertConditionalKeys(configname)
+             if self.xcode_settings[configname].get("IPHONEOS_DEPLOYMENT_TARGET", None):
+                 self.isIOS = True
++            # nodejs-mobile: tvOS builds take the iOS paths too.
++            if self.xcode_settings[configname].get("TVOS_DEPLOYMENT_TARGET", None):
++                self.isIOS = True
+ 
+         # This is only non-None temporarily during the execution of some methods.
+         self.configname = None
+@@ -552,8 +555,20 @@ class XcodeSettings:
          return XcodeSettings._sdk_path_cache[sdk_root]
  
      def _AppendPlatformVersionMinFlags(self, lst):
 -        self._Appendf(lst, "MACOSX_DEPLOYMENT_TARGET", "-mmacosx-version-min=%s")
 -        if "IPHONEOS_DEPLOYMENT_TARGET" in self._Settings():
++        # nodejs-mobile: Apple TV (appletvos / appletvsimulator SDKs).
++        if self._Settings().get('TVOS_DEPLOYMENT_TARGET'):
++            sdk_path_basename = os.path.basename(self._SdkPath())
++            if sdk_path_basename.lower().startswith("appletvsimulator"):
++                self._Appendf(
++                    lst, "TVOS_DEPLOYMENT_TARGET", "-mtvos-simulator-version-min=%s"
++                )
++            else:
++                self._Appendf(lst, "TVOS_DEPLOYMENT_TARGET", "-mtvos-version-min=%s")
++            return
 +        if (
 +            'IPHONEOS_DEPLOYMENT_TARGET' in self._Settings()
 +            and self._Settings()['IPHONEOS_DEPLOYMENT_TARGET']
@@ -568,7 +600,7 @@ index d13eaa9af2..ef010d6961 100644
              # TODO: Implement this better?
              sdk_path_basename = os.path.basename(self._SdkPath())
              if sdk_path_basename.lower().startswith("iphonesimulator"):
-@@ -564,6 +566,9 @@ class XcodeSettings:
+@@ -564,6 +579,9 @@ class XcodeSettings:
                  self._Appendf(
                      lst, "IPHONEOS_DEPLOYMENT_TARGET", "-miphoneos-version-min=%s"
                  )
@@ -578,7 +610,7 @@ index d13eaa9af2..ef010d6961 100644
  
      def GetCflags(self, configname, arch=None):
          """Returns flags that need to be added to .c, .cc, .m, and .mm
-@@ -652,7 +657,10 @@ class XcodeSettings:
+@@ -652,7 +670,10 @@ class XcodeSettings:
          # If GYP_CROSSCOMPILE (--cross-compiling), disable architecture-specific
          # additions and assume these will be provided as required via CC_host,
          # CXX_host, CC_target and CXX_target.
@@ -590,7 +622,7 @@ index d13eaa9af2..ef010d6961 100644
              if arch is not None:
                  archs = [arch]
              else:
-@@ -933,7 +941,8 @@ class XcodeSettings:
+@@ -933,7 +954,8 @@ class XcodeSettings:
              ldflags.append("-Wl,-order_file")
              ldflags.append("-Wl," + gyp_to_build_path(self._Settings()["ORDER_FILE"]))
  

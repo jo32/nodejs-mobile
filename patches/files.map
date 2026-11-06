@@ -11,6 +11,7 @@ build-gyp-mobile-flavor-handling-in-gyp-generators.patch	tools/gyp/pylib/gyp/gen
 build-gyp-mobile-flavor-handling-in-gyp-generators.patch	tools/gyp/pylib/gyp/xcode_emulation.py
 src-mobile-platform-guards-in-node.cc-node_internals.patch	src/node.cc
 src-mobile-platform-guards-in-node.cc-node_internals.patch	src/node_internals.h
+src-mobile-platform-guards-in-node.cc-node_internals.patch	src/node_process_methods.cc
 src-guard-POSIX-credential-APIs-on-Android.patch	src/node_credentials.cc
 src-skip-unclonable-env-vars-on-Android.patch	src/node_env_var.cc
 src-expose-the-mobile-version-key-in-metadata.patch	src/node_metadata.cc
@@ -48,7 +49,6 @@ test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs
 test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-realpath-native.js
 test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-realpath.js
 test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-rmSync-special-char-additional-error.js
-test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-rmdir-recursive.js
 test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-stat.js
 test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-watch.js
 test-skip-adapt-parallel-and-sequential-tests-for-mo.patch	test/parallel/test-fs-watchfile.js
@@ -77,6 +77,8 @@ ci-remove-upstream-only-workflows-and-config.patch	.github/SUPPORT.md
 ci-remove-upstream-only-workflows-and-config.patch	.github/label-pr-config.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/author-ready-conflicts.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/auto-start-ci.yml
+ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/benchmark.yml
+ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/build-shared.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/build-tarball.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/close-stalled.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/codeql.yml
@@ -99,6 +101,8 @@ ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/license-bui
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/lint-release-proposal.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/linters.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/major-release.yml
+ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/nix-changes-comment.yml
+ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/nix-changes.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/notify-on-push.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/notify-on-review-wanted.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/post-release.yml
@@ -107,9 +111,11 @@ ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/scorecard.y
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/stale.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/stress-test.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/test-internet.yml
+ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/test-linux-perfetto.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/test-linux-quic.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/test-linux.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/test-macos.yml
+ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/test-shared.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/timezone-update.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/tools.yml
 ci-remove-upstream-only-workflows-and-config.patch	.github/workflows/update-openssl.yml

@@ -80,7 +80,7 @@
 		A36728C12E530EF7004DF2FB /* libncrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libncrypto.a; path = bin/libncrypto.a; sourceTree = "<group>"; };
 		B1CE0A022E530EF7004DF2FB /* libncrypto_engine.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libncrypto_engine.a; path = bin/libncrypto_engine.a; sourceTree = "<group>"; };
 		A36728C32E530EF7004DF2FB /* libzlib_data_chunk_simd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libzlib_data_chunk_simd.a; path = bin/libzlib_data_chunk_simd.a; sourceTree = "<group>"; };
-		A36728C62E5355E5004DF2FB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		A36728C62E5355E5004DF2FB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		A3F2E7582E716AA30001C23B /* libsqlite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsqlite.a; path = bin/libsqlite.a; sourceTree = "<group>"; };
 		D9A761AE1F7C63A8006AFE86 /* NodeMobile.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = NodeMobile.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9A762251F7C674F006097B1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -341,7 +341,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -394,7 +394,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -421,7 +421,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = NodeMobile/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -459,7 +459,7 @@
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = NodeMobile/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

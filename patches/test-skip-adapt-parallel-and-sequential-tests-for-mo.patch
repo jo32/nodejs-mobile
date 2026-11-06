@@ -16,7 +16,7 @@ series itself.
 Co-authored-by: Jaime Bernardo <jaime@janeasystems.com>
 Co-authored-by: Andre Staltz <andre@staltz.com>
 ---
- test/parallel/parallel.status                 | 1473 +++++++++++++++++
+ test/parallel/parallel.status                 | 1477 +++++++++++++++++
  test/parallel/test-dgram-bind-fd.js           |    2 +-
  test/parallel/test-dgram-membership.js        |   10 +-
  .../parallel/test-dgram-socket-buffer-size.js |    2 +-
@@ -32,7 +32,6 @@ Co-authored-by: Andre Staltz <andre@staltz.com>
  test/parallel/test-fs-realpath-native.js      |    7 +
  test/parallel/test-fs-realpath.js             |    8 +-
  ...fs-rmSync-special-char-additional-error.js |    4 +-
- test/parallel/test-fs-rmdir-recursive.js      |    6 +
  test/parallel/test-fs-stat.js                 |    7 +
  test/parallel/test-fs-watch.js                |   10 +-
  test/parallel/test-fs-watchfile.js            |    4 +-
@@ -54,13 +53,13 @@ Co-authored-by: Andre Staltz <andre@staltz.com>
  test/sequential/sequential.status             |  129 ++
  test/sequential/test-async-wrap-getasyncid.js |   15 +-
  test/sequential/test-fs-watch.js              |    4 +
- 38 files changed, 1796 insertions(+), 49 deletions(-)
+ 37 files changed, 1794 insertions(+), 49 deletions(-)
 
 diff --git a/test/parallel/parallel.status b/test/parallel/parallel.status
-index d13efc8ac1..0536fbccdd 100644
+index 0fe217d4e4..3795872fc8 100644
 --- a/test/parallel/parallel.status
 +++ b/test/parallel/parallel.status
-@@ -160,6 +160,1479 @@ test-tls-set-default-ca-certificates-append-fetch: SKIP
+@@ -138,6 +138,1483 @@ test-tls-set-default-ca-certificates-append-fetch: SKIP
  test-tls-set-default-ca-certificates-reset-fetch: SKIP
  test-inspector-invalid-protocol: SKIP
  
@@ -1537,9 +1536,13 @@ index d13efc8ac1..0536fbccdd 100644
 +#
 +test-https-client-renegotiation-limit: PASS, FLAKY
 +test-https-selfsigned-no-keycertsign-no-crash: PASS, FLAKY
- [$asan==on]
- # https://github.com/nodejs/node/issues/39655
- test-cluster-primary-error: PASS, FLAKY
++[$asan==on]
++# https://github.com/nodejs/node/issues/39655
++test-cluster-primary-error: PASS, FLAKY
++
+ [$arch==loong64]
+ # https://github.com/nodejs/node/issues/51662
+ test-http-correct-hostname: SKIP
 diff --git a/test/parallel/test-dgram-bind-fd.js b/test/parallel/test-dgram-bind-fd.js
 index daf7f8064b..76c2ce82dd 100644
 --- a/test/parallel/test-dgram-bind-fd.js
@@ -1609,10 +1612,10 @@ index 51d7153de0..9b1395f99b 100644
    assert.strictEqual(err.dest, dest);
  }
 diff --git a/test/parallel/test-fs-glob.mjs b/test/parallel/test-fs-glob.mjs
-index 869fbcac0d..893887dc36 100644
+index ed73175080..078af6a80b 100644
 --- a/test/parallel/test-fs-glob.mjs
 +++ b/test/parallel/test-fs-glob.mjs
-@@ -658,7 +658,10 @@ describe('globSync - ENOTDIR', function() {
+@@ -912,7 +912,10 @@ describe('globSync - ENOTDIR', function() {
  
  describe('glob - seen cache', function() {
    // Refs: https://github.com/nodejs/node/issues/62897
@@ -1670,7 +1673,7 @@ index 55478247f6..cdfaaa0b88 100644
    tmpdir.refresh();
    const file = tmpdir.resolve('a.js');
 diff --git a/test/parallel/test-fs-promises.js b/test/parallel/test-fs-promises.js
-index 5866c685f5..d27a5fe1be 100644
+index 07f01187e8..84fc6097fe 100644
 --- a/test/parallel/test-fs-promises.js
 +++ b/test/parallel/test-fs-promises.js
 @@ -321,7 +321,8 @@ async function executeOnHandle(dest, func) {
@@ -1796,23 +1799,6 @@ index 9b4de3c84d..dbfc1eb426 100644
        expectedCode = 'ENOTEMPTY';
      } else if (common.isWindows) {
        expectedCode = 'EPERM';
-diff --git a/test/parallel/test-fs-rmdir-recursive.js b/test/parallel/test-fs-rmdir-recursive.js
-index 77c205794b..4c52904b43 100644
---- a/test/parallel/test-fs-rmdir-recursive.js
-+++ b/test/parallel/test-fs-rmdir-recursive.js
-@@ -7,6 +7,12 @@ const fs = require('fs');
- const path = require('path');
- const { validateRmdirOptions } = require('internal/fs/utils');
- 
-+if (common.isIOS || common.isAndroid) {
-+  // Change the working dir for what would be expected of the test framework
-+  // running in a Desktop environment.
-+  process.chdir(path.join(__dirname, '..', '..'));
-+}
-+
- common.expectWarning(
-   'DeprecationWarning',
-   'In future versions of Node.js, fs.rmdir(path, { recursive: true }) ' +
 diff --git a/test/parallel/test-fs-stat.js b/test/parallel/test-fs-stat.js
 index 93bf6573a1..b323f665a8 100644
 --- a/test/parallel/test-fs-stat.js
@@ -1869,10 +1855,10 @@ index 5194e04fce..2c289102e4 100644
      else
        assert.strictEqual(eventType, 'change');
 diff --git a/test/parallel/test-fs-watchfile.js b/test/parallel/test-fs-watchfile.js
-index bd86835d9f..982fa44dfb 100644
+index e1fd3f4c34..30045c9d41 100644
 --- a/test/parallel/test-fs-watchfile.js
 +++ b/test/parallel/test-fs-watchfile.js
-@@ -84,7 +84,9 @@ watcher.on('stop', common.mustCall());
+@@ -88,7 +88,9 @@ watcher.on('stop', common.mustCall());
  
  // Watch events should callback with a filename on supported systems.
  // Omitting AIX. It works but not reliably.
@@ -2076,7 +2062,7 @@ index a2df7d580d..eeb6c1de91 100644
 +
 +assert.deepStrictEqual(process.getActiveResourcesInfo(), expected);
 diff --git a/test/parallel/test-process-versions.js b/test/parallel/test-process-versions.js
-index 7f54beeea6..14f222d299 100644
+index 420625b01f..71495816e5 100644
 --- a/test/parallel/test-process-versions.js
 +++ b/test/parallel/test-process-versions.js
 @@ -2,8 +2,15 @@
@@ -2107,7 +2093,7 @@ index 7f54beeea6..14f222d299 100644
  
  const hasUndici = process.config.variables.node_builtin_shareable_builtins.includes('deps/undici/undici.js');
  const hasAmaro = process.config.variables.node_builtin_shareable_builtins.includes('deps/amaro/dist/index.js');
-@@ -111,11 +121,17 @@ for (let i = 0; i < expected_keys.length; i++) {
+@@ -128,11 +138,17 @@ for (let i = 0; i < expected_keys.length; i++) {
  assert.strictEqual(process.config.variables.napi_build_version,
                     process.versions.napi);
  
@@ -2198,7 +2184,7 @@ index b84d2063a2..4411854e0b 100644
  }, 1);
  
 diff --git a/test/parallel/test-sqlite-backup.mjs b/test/parallel/test-sqlite-backup.mjs
-index ee5f54fd90..f703409f4c 100644
+index cae097aa92..a0eeb7deb6 100644
 --- a/test/parallel/test-sqlite-backup.mjs
 +++ b/test/parallel/test-sqlite-backup.mjs
 @@ -2,6 +2,8 @@
@@ -2223,10 +2209,10 @@ index ee5f54fd90..f703409f4c 100644
      fixtures.path('sqlite', 'backup-last-request.mjs'),
      nextDb(),
 diff --git a/test/parallel/test-watch-mode-files_watcher.mjs b/test/parallel/test-watch-mode-files_watcher.mjs
-index e1595350cd..f5d84f7480 100644
+index 10e078286e..9c4ec8787d 100644
 --- a/test/parallel/test-watch-mode-files_watcher.mjs
 +++ b/test/parallel/test-watch-mode-files_watcher.mjs
-@@ -199,6 +199,8 @@ describe('watch mode file watcher', () => {
+@@ -228,6 +228,8 @@ describe('watch mode file watcher', () => {
         assert.deepStrictEqual(watcher.watchedPaths, []);
       });
  
@@ -2235,17 +2221,17 @@ index e1595350cd..f5d84f7480 100644
    it('should watch files from subprocess IPC events', async () => {
      const file = fixtures.path('watch-mode/ipc.js');
      const child = spawn(process.execPath, [file], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'], encoding: 'utf8' });
-@@ -210,4 +212,5 @@ describe('watch mode file watcher', () => {
+@@ -241,4 +243,5 @@ describe('watch mode file watcher', () => {
      }
      assert.deepStrictEqual(watcher.watchedPaths, expected);
    });
 +  */
  });
 diff --git a/test/sequential/sequential.status b/test/sequential/sequential.status
-index 6b5714500b..9c8a8e0f5c 100644
+index f155b67473..cdf404aad1 100644
 --- a/test/sequential/sequential.status
 +++ b/test/sequential/sequential.status
-@@ -43,6 +43,135 @@ test-perf-hooks: SKIP
+@@ -33,6 +33,135 @@ test-perf-hooks: SKIP
  # https://github.com/nodejs/node/issues/39683
  test-tls-psk-client: PASS, FLAKY
  
@@ -2382,7 +2368,7 @@ index 6b5714500b..9c8a8e0f5c 100644
  # https://github.com/nodejs/node/issues/49933
  test-watch-mode-inspect: SKIP
 diff --git a/test/sequential/test-async-wrap-getasyncid.js b/test/sequential/test-async-wrap-getasyncid.js
-index ef48f457a8..529cc62b12 100644
+index 0800f07788..a738ae2c39 100644
 --- a/test/sequential/test-async-wrap-getasyncid.js
 +++ b/test/sequential/test-async-wrap-getasyncid.js
 @@ -12,6 +12,8 @@ const providers = { ...internalBinding('async_wrap').Providers };
@@ -2394,9 +2380,9 @@ index ef48f457a8..529cc62b12 100644
  
  // Make sure that all Providers are tested.
  {
-@@ -77,6 +79,12 @@ const { getSystemErrorName } = require('util');
-     delete providers.QUIC_STREAM;
-     delete providers.LOCKS;
+@@ -78,6 +80,12 @@ const { getSystemErrorName } = require('util');
+     delete providers.DTLS_ENDPOINT;
+     delete providers.DTLS_SESSION;
  
 +    if (common.isIOS) {
 +      // These providers are not tested on iOS.
@@ -2407,7 +2393,7 @@ index ef48f457a8..529cc62b12 100644
      const objKeys = Object.keys(providers);
      if (objKeys.length > 0)
        process._rawDebug(objKeys);
-@@ -198,7 +206,8 @@ if (common.hasCrypto) { // eslint-disable-line node-core/crypto-check
+@@ -199,7 +207,8 @@ if (common.hasCrypto) { // eslint-disable-line node-core/crypto-check
    testInitialized(handle, 'Pipe');
  }
  
@@ -2417,7 +2403,7 @@ index ef48f457a8..529cc62b12 100644
    tmpdir.refresh();
  
    const server = net.createServer(common.mustCall((socket) => {
-@@ -330,6 +339,8 @@ if (common.hasCrypto) { // eslint-disable-line node-core/crypto-check
+@@ -331,6 +340,8 @@ if (common.hasCrypto) { // eslint-disable-line node-core/crypto-check
  // DIRHANDLE
  {
    const dirBinding = internalBinding('fs_dir');
